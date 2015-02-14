@@ -4,11 +4,19 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.ece290.mobileimagingasteroids.MobileImagingAsteroids;
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication.Callbacks;
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class AndroidFragmentLauncher extends FragmentActivity {//implements AndroidFragmentApplication.Callbacks {
 
-  /*  @Override
+public class AndroidFragmentLauncher extends FragmentActivity implements AndroidFragmentApplication.Callbacks {
+
+    @Override
     protected void onCreate (Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -19,18 +27,16 @@ public class AndroidFragmentLauncher extends FragmentActivity {//implements Andr
         trans.commit();
     }
 
-    // 4. Create a Class that extends AndroidFragmentApplication which is the Fragment implementation for Libgdx.
     private class GameFragment extends AndroidFragmentApplication
     {
-        // 5. Add the initializeForView() code in the Fragment's onCreateView method.
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {  return initializeForView(new MyGdxGame());   }
+        {  return initializeForView(new MobileImagingAsteroids());   }
     }
 
 
     @Override
-    public void exit() {}*/
+    public void exit() {}
 
 
 }
