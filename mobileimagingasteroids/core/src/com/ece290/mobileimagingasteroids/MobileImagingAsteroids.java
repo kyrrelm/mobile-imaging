@@ -10,8 +10,7 @@ public class MobileImagingAsteroids extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
     Texture img2;
-    Texture img3;
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
