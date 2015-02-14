@@ -31,7 +31,14 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {  return initializeForView(new MobileImagingAsteroids());   }
+        {
+            AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+            config.useWakelock = true;
+            config.useAccelerometer = false;
+            config.useCompass = false;
+            return initializeForView(new MobileImagingAsteroids(), config);
+
+        }
     }
 
 
