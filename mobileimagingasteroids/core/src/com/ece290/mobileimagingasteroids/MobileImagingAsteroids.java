@@ -16,7 +16,7 @@ public class MobileImagingAsteroids extends Game {
 
 	@Override
 	public void create () {
-        setScreen(new GameScreen(this));
+        setScreen(new GameScreen());
 
 		/*batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");

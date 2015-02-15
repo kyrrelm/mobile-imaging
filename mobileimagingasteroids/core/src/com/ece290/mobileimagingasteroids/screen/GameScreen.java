@@ -7,52 +7,40 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.ece290.mobileimagingasteroids.GameRenderer;
+import com.ece290.mobileimagingasteroids.GameWorld;
 
 /**
  * Created by ethan_000 on 2/13/2015.
  */
 public class GameScreen implements Screen {
-
-    private Game game;
-    private OrthographicCamera camera;
     private float runTime;
+    private GameWorld world;
+    private GameRenderer renderer;
 
-    SpriteBatch batch;
-    Texture img;
-    Texture img2;
-
-
-
-    public GameScreen(Game game)
+    public GameScreen()
     {
         Gdx.app.log("GameScreen", "Attached");
-        this.game = game;
+
+        world = new GameWorld();
+        renderer = new GameRenderer(world);
 
 
-        /*camera = new OrthographicCamera();
-        camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        //camera.setToOrtho(true, 1920, 1080);
-
-        batch = new SpriteBatch();
-        img = new Texture("badlogic.jpg");
-        img2 = new Texture("bg.png");*/
     }
     @Override
     public void render(float delta) {
         Gdx.app.log("GameScreen", "render");
         runTime += delta;
-        //mWorld.update(delta, runTime);
-        //mRenderer.render(runTime);
-        Gdx.gl.glClearColor(1, .5f, .2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        /*Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        batch.draw(img, 0, 0);
-        batch.draw(img2, 500,500);
-        batch.end();
-*/
-        //camera.update();
+        Gdx.app.log("GameScreen", "FPS:"+(1 / delta) + " ");
+
+        /*Gdx.gl.glClearColor(1, .5f, .2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);*/
+
+        world.update(delta);
+        renderer.render();
+
+
+
     }
 
     @Override
@@ -80,11 +68,6 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         Gdx.app.log("GameScreen", "show");
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-       /* batch.begin();
-        batch.draw(img, 0, 0);
-        batch.draw(img2, 500,500);
-        batch.end();*/
     }
 
     @Override
