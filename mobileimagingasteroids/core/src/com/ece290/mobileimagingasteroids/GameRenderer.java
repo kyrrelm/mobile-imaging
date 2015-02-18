@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 /**
  * Created by ethan_000 on 2/15/2015.
@@ -37,6 +38,9 @@ public class GameRenderer {
 
         mSpriteBatch.begin();
         AssetLoader.bgSprite.draw(mSpriteBatch);
+        //mSpriteBatch.draw(AssetLoader.shipTexture, world.getShip().getX(), world.getShip().getY());
+        Ship ship = world.getShip();
+        mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth(),ship.getHeight());
         mSpriteBatch.end();
 
         // Tells shapeRenderer to begin drawing filled shapes
