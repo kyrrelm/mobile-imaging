@@ -16,6 +16,7 @@ public class MobileImagingAsteroids extends Game {
 
 	@Override
 	public void create () {
+        AssetLoader.load();
         setScreen(new GameScreen());
 
 		/*batch = new SpriteBatch();
@@ -23,6 +24,12 @@ public class MobileImagingAsteroids extends Game {
         img2 = new Texture("bg.png");*/
 
 	}
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        AssetLoader.dispose();
+    }
 
 	/*@Override
 	public void render () {

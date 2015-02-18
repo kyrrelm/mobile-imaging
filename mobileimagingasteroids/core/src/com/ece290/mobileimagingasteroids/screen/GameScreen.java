@@ -22,7 +22,7 @@ public class GameScreen implements Screen {
     {
         Gdx.app.log("GameScreen", "Attached");
 
-        world = new GameWorld();
+        world = new GameWorld(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         renderer = new GameRenderer(world);
 
 
