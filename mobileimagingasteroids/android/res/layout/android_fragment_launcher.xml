@@ -19,7 +19,7 @@
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:id="@+id/camera_view" />
+        android:id="@+id/java_camera_view" />
     <!--fragment android:name="com.ece290.mobileimagingasteroids.android.Fragment.ImagingFragmentActivity"
         android:id="@+id/image_fragment"
         android:layout_weight="1"
