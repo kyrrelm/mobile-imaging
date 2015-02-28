@@ -9,12 +9,17 @@
         android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="match_parent" />
-    <fragment android:name="com.ece290.mobileimagingasteroids.android.Fragment.ImagingFragment"
-        android:id="@+id/article_fragment"
+    <!--fragment android:name="com.ece290.mobileimagingasteroids.android.Fragment.ImagingFragment"
+        android:id="@+id/imaging_fragment"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        />
+        /-->
+    <org.opencv.android.JavaCameraView
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_view" />
     <!--fragment android:name="com.ece290.mobileimagingasteroids.android.Fragment.ImagingFragmentActivity"
         android:id="@+id/image_fragment"
         android:layout_weight="1"
