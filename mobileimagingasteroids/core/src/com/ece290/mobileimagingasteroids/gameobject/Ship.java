@@ -14,6 +14,7 @@ public class Ship extends GameObject {
 
     public Bullet shoot() {
         //TODO
+        return null;
     }
 
     @Override
