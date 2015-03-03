@@ -3,6 +3,7 @@ package com.ece290.mobileimagingasteroids;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
+import com.ece290.mobileimagingasteroids.gameobject.Bullet;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
