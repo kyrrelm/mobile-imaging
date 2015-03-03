@@ -1,10 +1,13 @@
 package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 /**
@@ -41,19 +44,29 @@ public class GameRenderer {
         //mSpriteBatch.draw(AssetLoader.shipTexture, world.getShip().getX(), world.getShip().getY());
         Ship ship = world.getShip();
         mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth(),ship.getHeight());
+
+        for (Asteroid a : world.getAsteroids())
+        {
+            mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth(),a.getHeight());
+        }
+
         mSpriteBatch.end();
 
         // Tells shapeRenderer to begin drawing filled shapes
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
         // Chooses RGB Color of 87, 109, 120 at full opacity
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
-
         // Draws the rectangle from myWorld (Using ShapeType.Filled)
         shapeRenderer.rect(world.getRect().x, world.getRect().y, world.getRect().width, world.getRect().height);
-
         // Tells the shapeRenderer to finish rendering
         // We MUST do this every time.
         shapeRenderer.end();
+
+        //Draw Polygons
+        shapeRenderer.begin(ShapeType.Line);
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.polygon(ship.getPolygon().getTransformedVertices());
+        shapeRenderer.end();
+
     }
 }

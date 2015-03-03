@@ -2,16 +2,21 @@ package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ethan_000 on 2/15/2015.
  */
 public class GameWorld {
-    private Rectangle rect = new Rectangle(0, 0, 320, 240);
 
+    private Rectangle rect = new Rectangle(0, 0, 320, 240);
     private int mWidth, mHeight;
     private Ship mShip;
+    private List<Asteroid> asteroids;
 
     private int lives;
     private int score;
@@ -22,6 +27,9 @@ public class GameWorld {
     {
         this.mWidth = width;
         this.mHeight = height;
+        asteroids = new ArrayList<Asteroid>();
+        asteroids.add(new Asteroid(200,200,50,50,40,40));
+
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
         mShip.setAccelerationY(2);
         mShip.setAccelerationY(1);
@@ -34,6 +42,14 @@ public class GameWorld {
         mShip.setX(mShip.getX()+4);
         if (mShip.getX() > Gdx.graphics.getWidth())
             mShip.setX(0);
+        for(Asteroid a : asteroids)
+        {
+            if (a.getX() > Gdx.graphics.getWidth())
+                a.setX(0);
+            if (a.getX() > Gdx.graphics.getHeight())
+                a.setY(0);
+            a.update(delta);
+        }
 
 
     }
@@ -42,4 +58,5 @@ public class GameWorld {
         return rect;
     }
     public Ship getShip(){return mShip;}
+    public List<Asteroid> getAsteroids(){return asteroids;}
 }

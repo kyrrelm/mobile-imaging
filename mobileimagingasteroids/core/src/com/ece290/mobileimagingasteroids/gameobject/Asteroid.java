@@ -3,13 +3,13 @@ package com.ece290.mobileimagingasteroids.gameobject;
 import com.badlogic.gdx.math.Polygon;
 
 /**
- * Created by ethan_000 on 2/17/2015.
+ * Created by ethan_000 on 3/2/2015.
  */
-public class Ship extends GameObject {
+public class Asteroid extends GameObject {
 
-    public Ship(int width, int height, float positionX, float positionY)
+    public Asteroid(int width, int height, float positionX, float positionY, float velocityX, float velocityY)
     {
-        super (width, height, positionX, positionY);
+        super (width, height, positionX, positionY, velocityX, velocityY);
     }
 
     @Override
