@@ -13,11 +13,18 @@ public class GameWorld {
     private int mWidth, mHeight;
     private Ship mShip;
 
+    private int lives;
+    private int score;
+
+    private boolean isGameOver;
+
     public GameWorld(int width, int height)
     {
         this.mWidth = width;
         this.mHeight = height;
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
+        mShip.setAccelerationY(2);
+        mShip.setAccelerationY(1);
     }
     public void update(float delta) {
         Gdx.app.log("GameWorld", "update");
@@ -27,6 +34,8 @@ public class GameWorld {
         mShip.setX(mShip.getX()+4);
         if (mShip.getX() > Gdx.graphics.getWidth())
             mShip.setX(0);
+
+
     }
 
     public Rectangle getRect() {
