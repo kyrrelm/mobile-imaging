@@ -12,6 +12,10 @@ public class Ship extends GameObject {
         super (width, height, positionX, positionY);
     }
 
+    public Bullet shoot() {
+        //TODO
+    }
+
     @Override
     protected Polygon getPolygonInternal() {
         Polygon p = new Polygon(new float[]{
