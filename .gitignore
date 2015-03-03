@@ -24,3 +24,13 @@ proguard/
 
 # Log Files
 *.log
+
+# Android studio
+.idea
+
+# OSX files
+.DS_Store
+
+# Eclipse project files
+.classpath
+.project
