@@ -66,6 +66,8 @@ public class GameRenderer {
         shapeRenderer.begin(ShapeType.Line);
         shapeRenderer.setColor(Color.CYAN);
         shapeRenderer.polygon(ship.getPolygon().getTransformedVertices());
+        for(Asteroid a : world.getAsteroids())
+            shapeRenderer.polygon(a.getPolygon().getTransformedVertices());
         shapeRenderer.end();
 
     }
