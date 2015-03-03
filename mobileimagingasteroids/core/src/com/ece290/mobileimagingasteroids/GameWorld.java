@@ -53,6 +53,8 @@ public class GameWorld {
             a.update(delta);
         }
 
+        //TODO also will need collision for shooting
+
         for(Asteroid a : asteroids)
         {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()));
