@@ -2,7 +2,10 @@ package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
+
+import java.util.ArrayList;
 
 /**
  * Created by ethan_000 on 2/15/2015.
@@ -12,6 +15,9 @@ public class GameWorld {
 
     private int mWidth, mHeight;
     private Ship mShip;
+
+    private ArrayList<Asteroid> asteroidList;
+    private ArrayList<Bullet> bulletList;
 
     private int lives;
     private int score;
@@ -34,7 +40,6 @@ public class GameWorld {
         mShip.setX(mShip.getX()+4);
         if (mShip.getX() > Gdx.graphics.getWidth())
             mShip.setX(0);
-
 
     }
 
