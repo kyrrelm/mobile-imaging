@@ -29,7 +29,7 @@ public class GameRenderer {
         shapeRenderer.setProjectionMatrix(cam.combined);
     }
     public void render() {
-        Gdx.app.log("GameRenderer", "render");
+        //Gdx.app.log("GameRenderer", "render");
 
         //Gdx.gl.glClearColor(1.0f, 1.0f, .5f, 1);
         //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

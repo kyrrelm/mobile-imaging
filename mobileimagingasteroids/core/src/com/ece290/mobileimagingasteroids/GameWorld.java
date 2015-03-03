@@ -27,7 +27,7 @@ public class GameWorld {
         mShip.setAccelerationY(1);
     }
     public void update(float delta) {
-        Gdx.app.log("GameWorld", "update");
+        //Gdx.app.log("GameWorld", "update");
         rect.x += 4;
         if (rect.x > Gdx.graphics.getWidth())
             rect.x = 0;
