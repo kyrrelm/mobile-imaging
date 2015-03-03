@@ -1,11 +1,13 @@
 package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -51,12 +53,17 @@ public class GameWorld {
             a.update(delta);
         }
 
+        for(Asteroid a : asteroids)
+        {
+            if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()));
+            {
+                //TODO game over
+            }
+        }
 
     }
 
-    public Rectangle getRect() {
-        return rect;
-    }
+    public Rectangle getRect() {return rect;}
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
 }
