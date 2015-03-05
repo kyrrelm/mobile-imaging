@@ -20,7 +20,6 @@ public class Ship extends GameObject {
         //mPosition.add(mVelocity.cpy().scl(delta));
         mPosition.add(mVelocity.cpy().scl(delta).rotate(mRotation.x));
         mRotation.add(mRotationUpdate.cpy().scl(delta));
-
     }
 
     @Override
