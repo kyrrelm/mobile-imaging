@@ -14,6 +14,7 @@ public abstract class GameObject {
     protected float mRotation, mRotationUpdate;
     private Polygon mPolygon;
 
+
     protected GameObject(int width, int height)
     {
         mWidth = width;
@@ -131,6 +132,15 @@ public abstract class GameObject {
 
     public float getRotation() {
         return mRotation;
+    }
+
+    public void setRotation (float degrees) {
+        mRotation = degrees;
+    }
+
+    /** Applies additional rotation to the polygon by the supplied degrees. */
+    public void rotate (float degrees) {
+        mRotation += degrees;
     }
 
     public void setRotationUpdate(float r)

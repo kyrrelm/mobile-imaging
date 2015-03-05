@@ -33,15 +33,18 @@ public class GameWorld {
         asteroids.add(new Asteroid(200,200,50,50,40,40));
 
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
-        mShip.setAccelerationY(2);
-        mShip.setAccelerationY(1);
+        //mShip.setAccelerationY(2);
+        //mShip.setAccelerationY(1);
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
         rect.x += 4;
         if (rect.x > Gdx.graphics.getWidth())
             rect.x = 0;
-        mShip.setX(mShip.getX()+4);
+        mShip.update(delta);
+        mShip.setRotationUpdate(1);
+        //mShip.setX(mShip.getX()+4);
+        //mShip.setRotation(mShip.getRotation()+20);
         if (mShip.getX() > Gdx.graphics.getWidth())
             mShip.setX(0);
         for(Asteroid a : asteroids)
