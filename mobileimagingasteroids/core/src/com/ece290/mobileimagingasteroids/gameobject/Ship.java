@@ -14,6 +14,16 @@ public class Ship extends GameObject {
     }
 
     @Override
+    public void update(float delta)
+    {
+        mVelocity.add(mAcceleration.cpy().scl(delta));
+        //mPosition.add(mVelocity.cpy().scl(delta));
+        mPosition.add(mVelocity.cpy().scl(delta).rotate(mRotation.x));
+        mRotation.add(mRotationUpdate.cpy().scl(delta));
+
+    }
+
+    @Override
     protected Polygon getPolygonInternal() {
 
         Polygon p = new Polygon(new float[]{

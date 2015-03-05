@@ -1,9 +1,11 @@
 package com.ece290.mobileimagingasteroids;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
+import com.ece290.mobileimagingasteroids.gameobject.GameObject;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
@@ -33,8 +35,7 @@ public class GameWorld {
         asteroids.add(new Asteroid(200,200,50,50,40,40));
 
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
-        //mShip.setAccelerationY(2);
-        //mShip.setAccelerationY(1);
+        mShip.setVelocityY(-30);
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
@@ -43,16 +44,10 @@ public class GameWorld {
             rect.x = 0;
         mShip.update(delta);
         mShip.setRotationUpdate(5);
-        //mShip.setX(mShip.getX()+4);
-        //mShip.setRotation(mShip.getRotation()+20);
-        if (mShip.getX() > Gdx.graphics.getWidth())
-            mShip.setX(0);
+        resetGameObjectInScreenBounds(mShip);
         for(Asteroid a : asteroids)
         {
-            if (a.getX() > Gdx.graphics.getWidth())
-                a.setX(0);
-            if (a.getY() > Gdx.graphics.getHeight())
-                a.setY(0);
+            resetGameObjectInScreenBounds(a);
             a.setRotationUpdate(10);
             a.update(delta);
         }
@@ -67,6 +62,18 @@ public class GameWorld {
             }
         }
 
+    }
+
+    private void resetGameObjectInScreenBounds(GameObject o)
+    {
+        if (o.getX() > Gdx.graphics.getWidth())
+            o.setX(0);
+        if (o.getX() < 0 )
+            o.setX(Gdx.graphics.getWidth());
+        if (o.getY() > Gdx.graphics.getHeight())
+            o.setY(0);
+        if (o.getY() < 0 )
+            o.setY(Gdx.graphics.getHeight());
     }
 
     public Rectangle getRect() {return rect;}
