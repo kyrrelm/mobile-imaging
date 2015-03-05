@@ -53,6 +53,7 @@ public class GameWorld {
                 a.setX(0);
             if (a.getY() > Gdx.graphics.getHeight())
                 a.setY(0);
+            a.setRotationUpdate(10);
             a.update(delta);
         }
 
