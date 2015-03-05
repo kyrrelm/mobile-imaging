@@ -2,19 +2,12 @@ package com.ece290.mobileimagingasteroids.android;
 
 import android.os.Bundle;
 
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.ece290.mobileimagingasteroids.MobileImagingAsteroids;
-import com.badlogic.gdx.backends.android.AndroidFragmentApplication.Callbacks;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -27,12 +20,17 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -151,13 +149,36 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
-        if(mIsColorSelected)
-        {
+        if (mIsColorSelected) {
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
-            Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
+
+            if (!contours.isEmpty()) {
+                MatOfPoint handContour = findBiggestContour(contours);
+                Point[] contourPts = handContour.toArray();
+                MatOfInt convexHullMatOfInt = new MatOfInt();
+                MatOfInt4 convexityDefects = new MatOfInt4();
+                Imgproc.convexHull(handContour, convexHullMatOfInt);
+                Imgproc.convexityDefects(handContour, convexHullMatOfInt, convexityDefects);
+                List<Integer> convexityDefectsList = convexityDefects.toList();
+
+
+                for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
+                    if (convexityDefectsList.get(i+1) > 30000) {
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(0, 0, 255));
+                    }
+                }
+
+                // Convert Point arrays into MatOfPoint
+                MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
+                Point centroid = centerOfMass(convexHullMatOfPoints);
+                //TODO: Draw for debug
+                Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
+                List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
+                hax.add(convexHullMatOfPoints);
+                Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
+            }
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
 
@@ -166,6 +187,41 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         }
 
         return mRgba;
+    }
+
+    private Point centerOfMass(MatOfPoint convexHull){
+        Point centroid = new Point();
+        Moments moments = Imgproc.moments(convexHull);
+        centroid.x = moments.get_m10() / moments.get_m00();
+        centroid.y = moments.get_m01() / moments.get_m00();
+        return centroid;
+    }
+
+    private MatOfPoint matOfIntToMatOfPoint(MatOfInt convexHullMatOfInt, MatOfPoint contour){
+        Point[] convexHullPoints = new Point[convexHullMatOfInt.rows()];
+        for(int j=0; j < convexHullMatOfInt.rows(); j++){
+            int index = (int)convexHullMatOfInt.get(j, 0)[0];
+            convexHullPoints[j] = new Point(contour.get(index, 0)[0], contour.get(index, 0)[1]);
+        }
+
+        // Convert Point arrays into MatOfPoint
+        MatOfPoint convexHullMatOfPoints = new MatOfPoint();
+        convexHullMatOfPoints.fromArray(convexHullPoints);
+        return convexHullMatOfPoints;
+    }
+
+
+    private MatOfPoint findBiggestContour(List<MatOfPoint> contours) {
+        double biggest = 0;
+        MatOfPoint current = null;
+        for (MatOfPoint contour : contours) {
+            double size = Imgproc.contourArea(contour);
+            if(size > biggest){
+                biggest = size;
+                current = contour;
+            }
+        }
+        return current;
     }
 
     @Override
