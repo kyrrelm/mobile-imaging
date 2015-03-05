@@ -3,6 +3,8 @@ package com.ece290.mobileimagingasteroids.gameobject;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Created by ethan_000 on 2/17/2015.
  */
@@ -63,6 +65,11 @@ public abstract class GameObject {
             mPolygon.setRotation(mRotation);
         }
         return mPolygon;
+    }
+
+    protected Polygon getPolygonOutline(BufferedImage image) {
+        //TODO
+        return null;
     }
 
     public float getX() {
