@@ -51,7 +51,7 @@ public class GameWorld {
         {
             if (a.getX() > Gdx.graphics.getWidth())
                 a.setX(0);
-            if (a.getX() > Gdx.graphics.getHeight())
+            if (a.getY() > Gdx.graphics.getHeight())
                 a.setY(0);
             a.update(delta);
         }
