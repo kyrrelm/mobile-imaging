@@ -48,7 +48,7 @@ public class GameRenderer {
 
         for (Asteroid a : world.getAsteroids())
         {
-            mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth(),a.getHeight());
+            mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
         }
 
         mSpriteBatch.end();
