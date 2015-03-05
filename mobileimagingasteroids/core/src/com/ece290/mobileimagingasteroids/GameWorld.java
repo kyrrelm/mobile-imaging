@@ -42,7 +42,7 @@ public class GameWorld {
         if (rect.x > Gdx.graphics.getWidth())
             rect.x = 0;
         mShip.update(delta);
-        mShip.setRotationUpdate(1);
+        mShip.setRotationUpdate(5);
         //mShip.setX(mShip.getX()+4);
         //mShip.setRotation(mShip.getRotation()+20);
         if (mShip.getX() > Gdx.graphics.getWidth())

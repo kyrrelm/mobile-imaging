@@ -53,15 +53,11 @@ public class GameRenderer {
 
         mSpriteBatch.end();
 
-        // Tells shapeRenderer to begin drawing filled shapes
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        // Chooses RGB Color of 87, 109, 120 at full opacity
+
+        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
-        // Draws the rectangle from myWorld (Using ShapeType.Filled)
         shapeRenderer.rect(world.getRect().x, world.getRect().y, world.getRect().width, world.getRect().height);
-        // Tells the shapeRenderer to finish rendering
-        // We MUST do this every time.
-        shapeRenderer.end();
+        shapeRenderer.end();*/
 
         //Draw Polygons
         shapeRenderer.begin(ShapeType.Line);
