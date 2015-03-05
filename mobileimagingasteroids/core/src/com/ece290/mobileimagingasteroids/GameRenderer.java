@@ -43,24 +43,21 @@ public class GameRenderer {
         AssetLoader.bgSprite.draw(mSpriteBatch);
         //mSpriteBatch.draw(AssetLoader.shipTexture, world.getShip().getX(), world.getShip().getY());
         Ship ship = world.getShip();
-        mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth(),ship.getHeight());
+        mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth()/2,ship.getHeight()/2,ship.getWidth(),ship.getHeight(),1,1,ship.getRotation());
+        Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
         for (Asteroid a : world.getAsteroids())
         {
-            mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth(),a.getHeight());
+            mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
         }
 
         mSpriteBatch.end();
 
-        // Tells shapeRenderer to begin drawing filled shapes
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        // Chooses RGB Color of 87, 109, 120 at full opacity
+
+        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
-        // Draws the rectangle from myWorld (Using ShapeType.Filled)
         shapeRenderer.rect(world.getRect().x, world.getRect().y, world.getRect().width, world.getRect().height);
-        // Tells the shapeRenderer to finish rendering
-        // We MUST do this every time.
-        shapeRenderer.end();
+        shapeRenderer.end();*/
 
         //Draw Polygons
         shapeRenderer.begin(ShapeType.Line);

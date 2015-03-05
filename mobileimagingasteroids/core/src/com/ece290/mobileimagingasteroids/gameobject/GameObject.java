@@ -12,9 +12,12 @@ public abstract class GameObject {
     public Vector2 mPosition = new Vector2();
     public Vector2 mVelocity = new Vector2();
     public Vector2 mAcceleration = new Vector2();
+    public Vector2 mRotation = new Vector2();
+    public Vector2 mRotationUpdate = new Vector2();
     protected int mWidth, mHeight;
-    protected float mRotation, mRotationUpdate;
+    //protected float mRotation, mRotationUpdate;
     private Polygon mPolygon;
+
 
     protected GameObject(int width, int height)
     {
@@ -48,7 +51,7 @@ public abstract class GameObject {
     {
         mVelocity.add(mAcceleration.cpy().scl(delta));
         mPosition.add(mVelocity.cpy().scl(delta));
-        mRotation += mRotationUpdate;
+        mRotation.add(mRotationUpdate.cpy().scl(delta));
     }
 
     protected abstract Polygon getPolygonInternal();
@@ -62,7 +65,7 @@ public abstract class GameObject {
         if(null!=mPolygon)
         {
             mPolygon.setPosition(mPosition.x, mPosition.y);
-            mPolygon.setRotation(mRotation);
+            mPolygon.setRotation(mRotation.x);
         }
         return mPolygon;
     }
@@ -137,12 +140,21 @@ public abstract class GameObject {
     }
 
     public float getRotation() {
-        return mRotation;
+        return mRotation.x;
+    }
+
+    public void setRotation (float degrees) {
+        mRotation.x = degrees;
+    }
+
+    /** Applies additional rotation to the polygon by the supplied degrees. */
+    public void rotate (float degrees) {
+        mRotation.add(degrees,0);
     }
 
     public void setRotationUpdate(float r)
     {
-        mRotationUpdate = r;
+        mRotationUpdate.x = r;
     }
 
 }

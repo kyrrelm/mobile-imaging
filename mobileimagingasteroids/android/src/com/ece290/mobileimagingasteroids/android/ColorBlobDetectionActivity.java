@@ -1,20 +1,10 @@
 package com.ece290.mobileimagingasteroids.android;
 
-import android.os.Bundle;
-
-import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
-
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.android.JavaCameraView;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -27,36 +17,44 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnTouchListener;
 
+public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
+    private static final String  TAG              = "OCVSample::Activity";
+    private static final String  DEBUG_TAG = "debugTag";
 
-public class AndroidFragmentLauncher extends FragmentActivity implements AndroidFragmentApplication.Callbacks, CvCameraViewListener2, View.OnTouchListener {
-    private static final String  TAG              = "AndroidFragmentLauncher";
-
-    private JavaCameraView mOpenCvCameraView;
-    private boolean mIsColorSelected = false;
+    private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
     private ColorBlobDetector    mDetector;
     private Mat                  mSpectrum;
-    private Size SPECTRUM_SIZE;
-    private Scalar CONTOUR_COLOR;
+    private Size                 SPECTRUM_SIZE;
+    private Scalar               CONTOUR_COLOR;
 
+    private CameraBridgeViewBase mOpenCvCameraView;
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                 {
-                    //mOpenCvCameraView.enableFpsMeter();
+                    Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView();
-                    mOpenCvCameraView.setOnTouchListener(AndroidFragmentLauncher.this);
+                    mOpenCvCameraView.setOnTouchListener(ColorBlobDetectionActivity.this);
                 } break;
                 default:
                 {
@@ -66,18 +64,43 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         }
     };
 
+    public ColorBlobDetectionActivity() {
+        Log.i(TAG, "Instantiated new " + this.getClass());
+    }
+
+    /** Called when the activity is first created. */
     @Override
-    protected void onCreate (Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.android_fragment_launcher);
+        setContentView(R.layout.color_blob_detection_surface_view);
 
-        mOpenCvCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
-        //mOpenCvCameraView.setMaxFrameSize(1000, 1000);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -88,7 +111,6 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
         CONTOUR_COLOR = new Scalar(255,0,0,255);
-
     }
 
     public void onCameraViewStopped() {
@@ -96,6 +118,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     }
 
     public boolean onTouch(View v, MotionEvent event) {
+        Log.i(DEBUG_TAG, "onTouch");
         int cols = mRgba.cols();
         int rows = mRgba.rows();
 
@@ -143,11 +166,9 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         touchedRegionHsv.release();
 
         return false; // don't need subsequent touch events
-
-
     }
 
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         if (mIsColorSelected) {
             mDetector.process(mRgba);
@@ -171,7 +192,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 }
 
                 // Convert Point arrays into MatOfPoint
-                MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
+                MatOfPoint convexHullMatOfPoints = matOfIntToMatofPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
                 //TODO: Draw for debug
                 Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
@@ -189,6 +210,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         return mRgba;
     }
 
+
     private Point centerOfMass(MatOfPoint convexHull){
         Point centroid = new Point();
         Moments moments = Imgproc.moments(convexHull);
@@ -197,11 +219,11 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         return centroid;
     }
 
-    private MatOfPoint matOfIntToMatOfPoint(MatOfInt convexHullMatOfInt, MatOfPoint contour){
+    private MatOfPoint matOfIntToMatofPoint(MatOfInt convexHullMatOfInt, MatOfPoint conture){
         Point[] convexHullPoints = new Point[convexHullMatOfInt.rows()];
         for(int j=0; j < convexHullMatOfInt.rows(); j++){
             int index = (int)convexHullMatOfInt.get(j, 0)[0];
-            convexHullPoints[j] = new Point(contour.get(index, 0)[0], contour.get(index, 0)[1]);
+            convexHullPoints[j] = new Point(conture.get(index, 0)[0], conture.get(index, 0)[1]);
         }
 
         // Convert Point arrays into MatOfPoint
@@ -224,30 +246,6 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         return current;
     }
 
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    @Override
-    public void exit() {}
-
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
         Mat pointMatRgba = new Mat();
         Mat pointMatHsv = new Mat(1, 1, CvType.CV_8UC3, hsvColor);
@@ -255,5 +253,4 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
         return new Scalar(pointMatRgba.get(0, 0));
     }
-
 }
