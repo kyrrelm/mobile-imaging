@@ -2,25 +2,29 @@ package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
+<<<<<<< HEAD
+import com.ece290.mobileimagingasteroids.gameobject.Shot;
+=======
 import com.ece290.mobileimagingasteroids.gameobject.GameObject;
+>>>>>>> 96a96246e663b478f077135368cd4ef80a1b1e49
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by ethan_000 on 2/15/2015.
  */
 public class GameWorld {
-
     private Rectangle rect = new Rectangle(0, 0, 320, 240);
+
     private int mWidth, mHeight;
     private Ship mShip;
-    private List<Asteroid> asteroids;
+
+    private ArrayList<Asteroid> asteroidList;
+    private ArrayList<Shot> bulletList;
 
     private int lives;
     private int score;
@@ -31,17 +35,29 @@ public class GameWorld {
     {
         this.mWidth = width;
         this.mHeight = height;
-        asteroids = new ArrayList<Asteroid>();
-        asteroids.add(new Asteroid(200,200,50,50,40,40));
-
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
+<<<<<<< HEAD
+        mShip.setAccelerationY(2);
+        mShip.setAccelerationY(1);
+=======
         mShip.setVelocityY(-30);
+>>>>>>> 96a96246e663b478f077135368cd4ef80a1b1e49
     }
     public void update(float delta) {
-        //Gdx.app.log("GameWorld", "update");
+        Gdx.app.log("GameWorld", "update");
         rect.x += 4;
         if (rect.x > Gdx.graphics.getWidth())
             rect.x = 0;
+<<<<<<< HEAD
+        mShip.setX(mShip.getX()+4);
+        if (mShip.getX() > Gdx.graphics.getWidth())
+            mShip.setX(0);
+
+    }
+    public Rectangle getRect() {
+        return rect;
+    }
+=======
         mShip.update(delta);
         mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
@@ -77,6 +93,6 @@ public class GameWorld {
     }
 
     public Rectangle getRect() {return rect;}
+>>>>>>> 96a96246e663b478f077135368cd4ef80a1b1e49
     public Ship getShip(){return mShip;}
-    public List<Asteroid> getAsteroids(){return asteroids;}
 }
