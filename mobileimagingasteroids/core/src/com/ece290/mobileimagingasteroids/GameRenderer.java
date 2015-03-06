@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
+import com.ece290.mobileimagingasteroids.gameobject.Shot;
 
 /**
  * Created by ethan_000 on 2/15/2015.
@@ -52,6 +53,7 @@ public class GameRenderer {
             mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
         }
 
+
         mSpriteBatch.end();
 
 
@@ -66,6 +68,10 @@ public class GameRenderer {
         shapeRenderer.polygon(ship.getPolygon().getTransformedVertices());
         for(Asteroid a : world.getAsteroids())
             shapeRenderer.polygon(a.getPolygon().getTransformedVertices());
+
+        for(Shot s: world.getShots())
+            shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
+
         shapeRenderer.end();
 
     }

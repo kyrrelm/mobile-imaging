@@ -1,6 +1,7 @@
 package com.ece290.mobileimagingasteroids.gameobject;
 
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by ethan_000 on 2/17/2015.
@@ -8,6 +9,7 @@ import com.badlogic.gdx.math.Polygon;
 public class Ship extends GameObject {
 
     private final float COOLDOWN_TIME = 2; //TODO
+    private final float SPEED = 5;
 
     private float shotCooldown = 0;
 
@@ -16,11 +18,17 @@ public class Ship extends GameObject {
         super (width, height, positionX, positionY);
     }
 
-    public Shot shoot(float delta) {
-        if(shotCooldown > 0)
-            return null;
+    public Shot shoot() {
 
-        Shot shot = new Shot(getX(), getY(), getVelocityX(),getVelocityY());
+        Vector2 vel = mVelocity.cpy().rotate(getRotation());
+
+        //float velX = mVelocity.cpy().rotate(getRotation());//(float)Math.sin(Math.toRadians(getRotation()))*SPEED);
+        //float velY = ;//(float)Math.cos(Math.toRadians(getRotation()))*SPEED);
+
+
+
+        Shot shot = new Shot(getX()+getWidth()/2, getY()+getHeight()/2, vel.x*SPEED, vel.y*SPEED);
+        shot.setRotation(getRotation());
         shotCooldown = COOLDOWN_TIME;
 
         return shot;

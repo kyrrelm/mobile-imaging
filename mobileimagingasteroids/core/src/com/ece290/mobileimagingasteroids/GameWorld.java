@@ -28,6 +28,8 @@ public class GameWorld {
     private int lives;
     private int score;
 
+    private int temp = 100;
+
     private boolean isGameOver;
 
     public GameWorld(int width, int height)
@@ -35,7 +37,10 @@ public class GameWorld {
         this.mWidth = width;
         this.mHeight = height;
         asteroids = new ArrayList<Asteroid>();
-        asteroids.add(new Asteroid(200,200,50,50,40,40));
+        asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
+
+        shots = new ArrayList<Shot>();
+        shots.add(new Shot(50,50,20,20));
 
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
         mShip.setVelocityY(-30);
@@ -53,6 +58,16 @@ public class GameWorld {
             resetGameObjectInScreenBounds(a);
             a.setRotationUpdate(10);
             a.update(delta);
+        }
+
+        for(Shot s : shots) {
+            s.update(delta);
+        }
+
+        temp--;
+        if(temp < 0) {
+            shots.add(mShip.shoot());
+            temp = 100;
         }
 
         //TODO also will need collision for shooting
@@ -82,4 +97,5 @@ public class GameWorld {
     public Rectangle getRect() {return rect;}
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
+    public List<Shot> getShots() {return shots;}
 }
