@@ -169,7 +169,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 1000) {
+                    if (convexityDefectsList.get(i+1) > 10000) {
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(0, 0, 255));
                         if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)])){
                             fingerTipCandidats.add(contourPts[convexityDefectsList.get(i - 1)]);
@@ -201,11 +201,11 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 HashSet<Point> fingerTips = new HashSet<Point>();
                 //TODO: Draw for debug
                 for (Point p: fingerTipCandidats){
-                    if (p.x < centroid.x){
+                    //if (p.x < centroid.x){
                         fingerTips.add(p);
                         Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
                         Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
-                    }
+                    //}
                 }
 
                 GestureDetector.detect(fingerTips,centroid);
