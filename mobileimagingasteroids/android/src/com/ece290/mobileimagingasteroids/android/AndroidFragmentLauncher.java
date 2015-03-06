@@ -32,6 +32,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -164,11 +165,38 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 Imgproc.convexityDefects(handContour, convexHullMatOfInt, convexityDefects);
                 List<Integer> convexityDefectsList = convexityDefects.toList();
 
+                HashSet<Point> fingerPoints = new HashSet<Point>();
+                ArrayList<Point> fingerTips = new ArrayList<Point>();
 
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 30000) {
+                    if (convexityDefectsList.get(i+1) > 10000) {
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(0, 0, 255));
+                        if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)])){
+                            fingerTips.add(contourPts[convexityDefectsList.get(i - 1)]);
+                        }
+                        if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)])){
+                            fingerTips.add(contourPts[convexityDefectsList.get(i - 2)]);
+                        }
+                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i-1)], 10, new Scalar(0, 0, 255));
+                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i-2)], 10, new Scalar(0, 0, 255));
                     }
+                }
+                HashSet<Point> done = new HashSet<Point>();
+                for (Point p0: fingerPoints){
+                    for (Point p1: fingerPoints){
+                        double diff = Math.hypot((Math.abs(p0.x - p1.x)), (Math.abs(p0.y - p1.y)));
+                        if (!done.contains(p0) && !done.contains(p1) && !p0.equals(p1)){
+                            if (diff < 40){
+                                fingerTips.add(new Point((p0.x + p1.x)/2, (p0.y + p1.y)/2));
+                                done.add(p0);
+                                done.add(p1);
+                            }
+                        }
+                    }
+                }
+
+                for (Point p: fingerTips){
+                    Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
                 }
 
                 // Convert Point arrays into MatOfPoint
