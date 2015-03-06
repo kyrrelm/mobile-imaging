@@ -17,8 +17,6 @@ import java.util.List;
  * Created by ethan_000 on 2/15/2015.
  */
 public class GameWorld {
-    private Rectangle rect = new Rectangle(0, 0, 320, 240);
-
     private int mWidth, mHeight;
     private Ship mShip;
 
@@ -29,6 +27,11 @@ public class GameWorld {
     private int score;
 
     private int temp = 100;
+    private float runTime;
+    private float asteroidSpawnTime;
+
+    private float ASTEROID_ARRIVAL_RATE = 0.2f;
+    private float ASTEROID_MAX = 20;
 
     private boolean isGameOver;
 
@@ -42,14 +45,25 @@ public class GameWorld {
         shots = new ArrayList<Shot>();
         shots.add(new Shot(50,50,20,20));
 
-        mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
+        asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
+
+        //asteroids.add(new Asteroid(200,200,50,50,40,40));
+
+        mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
         mShip.setVelocityY(-30);
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
-        rect.x += 4;
-        if (rect.x > Gdx.graphics.getWidth())
-            rect.x = 0;
+        runTime += delta;
+
+        if(runTime > asteroidSpawnTime)
+        {
+            if(asteroids.size() < ASTEROID_MAX) {
+                asteroids.add(new Asteroid(mWidth / 4, mHeight / 4));
+            }
+            asteroidSpawnTime = runTime + (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
+        }
+
         mShip.update(delta);
         mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
@@ -94,7 +108,19 @@ public class GameWorld {
             o.setY(Gdx.graphics.getHeight());
     }
 
-    public Rectangle getRect() {return rect;}
+    private boolean isGameObjectInScreenBounds(GameObject o)
+    {
+        if (o.getX() > Gdx.graphics.getWidth())
+            return false;
+        if (o.getX() < 0 )
+            return false;
+        if (o.getY() > Gdx.graphics.getHeight())
+            return false;
+        if (o.getY() < 0 )
+            return false;
+        return true;
+    }
+
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
     public List<Shot> getShots() {return shots;}
