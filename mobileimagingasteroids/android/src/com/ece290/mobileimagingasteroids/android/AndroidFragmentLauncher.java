@@ -169,7 +169,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 ArrayList<Point> fingerTips = new ArrayList<Point>();
 
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 3000) {
+                    if (convexityDefectsList.get(i+1) > 1000) {
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(0, 0, 255));
                         if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)])){
                             fingerTips.add(contourPts[convexityDefectsList.get(i - 1)]);
@@ -194,17 +194,17 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                         }
                     }
                 }
-
-                
-
-
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
+
+
                 //TODO: Draw for debug
                 for (Point p: fingerTips){
-                    Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
-                    Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
+                    if (p.x < centroid.x){
+                        Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
+                        Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
+                    }
                 }
                 Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
                 List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
