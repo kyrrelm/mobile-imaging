@@ -70,11 +70,6 @@ public abstract class GameObject {
         return mPolygon;
     }
 
-    protected Polygon getPolygonOutline(BufferedImage image) {
-        //TODO
-        return null;
-    }
-
     public float getX() {
         return mPosition.x;
     }

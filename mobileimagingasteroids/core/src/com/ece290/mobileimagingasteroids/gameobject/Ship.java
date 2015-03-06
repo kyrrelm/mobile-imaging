@@ -1,16 +1,27 @@
 package com.ece290.mobileimagingasteroids.gameobject;
 
 import com.badlogic.gdx.math.Polygon;
-import com.ece290.mobileimagingasteroids.AssetLoader;
 
 /**
  * Created by ethan_000 on 2/17/2015.
  */
 public class Ship extends GameObject {
 
+    private float COOLDOWN_TIME = 3; //TODO
+
+    private float shotCooldown = 0;
+
     public Ship(int width, int height, float positionX, float positionY)
     {
         super (width, height, positionX, positionY);
+    }
+
+    public void shoot(float delta) {
+        if(shotCooldown > 0)
+            return;
+
+        //TODO
+        shotCooldown = COOLDOWN_TIME;
     }
 
     @Override
@@ -20,6 +31,9 @@ public class Ship extends GameObject {
         //mPosition.add(mVelocity.cpy().scl(delta));
         mPosition.add(mVelocity.cpy().scl(delta).rotate(mRotation.x));
         mRotation.add(mRotationUpdate.cpy().scl(delta));
+
+        if(shotCooldown > 0)
+            shotCooldown -= delta;
     }
 
     @Override

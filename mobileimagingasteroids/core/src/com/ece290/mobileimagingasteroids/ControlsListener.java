@@ -5,4 +5,6 @@ package com.ece290.mobileimagingasteroids;
  */
 public interface ControlsListener {
         public void onRotationUpdate(int rotationUpdate);
+
+    public void onVelocityUpdate(int velocity);
 }
