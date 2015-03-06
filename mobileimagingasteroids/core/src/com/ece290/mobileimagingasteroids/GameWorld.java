@@ -30,6 +30,7 @@ public class GameWorld {
     private float asteroidSpawnTime;
 
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
+    private float ASTEROID_MAX = 20;
 
     private boolean isGameOver;
 
@@ -52,7 +53,9 @@ public class GameWorld {
 
         if(runTime > asteroidSpawnTime)
         {
-            asteroids.add(new Asteroid(mWidth/4,mHeight/4));
+            if(asteroids.size() < ASTEROID_MAX) {
+                asteroids.add(new Asteroid(mWidth / 4, mHeight / 4));
+            }
             asteroidSpawnTime = runTime + (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
         }
 
