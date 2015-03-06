@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Polygon;
  */
 public class Ship extends GameObject {
 
-    private final float COOLDOWN_TIME = 3; //TODO
+    private final float COOLDOWN_TIME = 2; //TODO
 
     private float shotCooldown = 0;
 
@@ -16,12 +16,14 @@ public class Ship extends GameObject {
         super (width, height, positionX, positionY);
     }
 
-    public void shoot(float delta) {
+    public Shot shoot(float delta) {
         if(shotCooldown > 0)
-            return;
+            return null;
 
-        //TODO
+        Shot shot = new Shot(getX(), getY(), getVelocityX(),getVelocityY());
         shotCooldown = COOLDOWN_TIME;
+
+        return shot;
     }
 
     @Override
