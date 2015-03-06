@@ -43,7 +43,7 @@ public class GameWorld {
         asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
 
         shots = new ArrayList<Shot>();
-        shots.add(new Shot(50,50,20,20));
+        shots.add(new Shot(50, 50, 20, 20));
 
         asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
 
@@ -85,12 +85,19 @@ public class GameWorld {
         }
 
         //TODO also will need collision for shooting
+        for (Shot s : shots) {
+            for (Asteroid a : asteroids) {
+                if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
+                    System.out.println("BULLET HIT");
+                }
+            }
+        }
 
         for(Asteroid a : asteroids)
         {
-            if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()));
+            if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
-                //TODO game over
+                System.out.println("SHIP HIT");
             }
         }
 
