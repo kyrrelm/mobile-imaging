@@ -34,20 +34,17 @@ public class GameWorld {
     {
         this.mWidth = width;
         this.mHeight = height;
+        asteroids = new ArrayList<Asteroid>();
+        asteroids.add(new Asteroid(200,200,50,50,40,40));
+
         mShip = new Ship(mWidth/15,mHeight/15, mWidth/2, mHeight/2);
-        mShip.setAccelerationY(2);
-        mShip.setAccelerationY(1);
         mShip.setVelocityY(-30);
     }
     public void update(float delta) {
-        Gdx.app.log("GameWorld", "update");
+        //Gdx.app.log("GameWorld", "update");
         rect.x += 4;
         if (rect.x > Gdx.graphics.getWidth())
             rect.x = 0;
-        mShip.setX(mShip.getX()+4);
-        if (mShip.getX() > Gdx.graphics.getWidth())
-            mShip.setX(0);
-
         mShip.update(delta);
         mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
@@ -84,4 +81,5 @@ public class GameWorld {
 
     public Rectangle getRect() {return rect;}
     public Ship getShip(){return mShip;}
+    public List<Asteroid> getAsteroids(){return asteroids;}
 }

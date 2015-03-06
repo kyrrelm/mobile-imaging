@@ -46,6 +46,7 @@ public class GameRenderer {
         mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth()/2,ship.getHeight()/2,ship.getWidth(),ship.getHeight(),1,1,ship.getRotation());
         Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
+
         for (Asteroid a : world.getAsteroids())
         {
             mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());

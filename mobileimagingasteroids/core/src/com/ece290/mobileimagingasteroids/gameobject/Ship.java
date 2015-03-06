@@ -26,6 +26,7 @@ public class Ship extends GameObject {
         return shot;
     }
 
+
     @Override
     public void update(float delta)
     {
