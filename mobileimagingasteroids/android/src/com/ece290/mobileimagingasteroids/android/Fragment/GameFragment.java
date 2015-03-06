@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,11 @@ public class GameFragment extends AndroidFragmentApplication
         config.useAccelerometer = false;
         config.useCompass = false;
         return initializeForView(new MobileImagingAsteroids(), config);
-
     }
+
+    public void onRotationUpdate(int rotationUpdate)
+    {
+        Log.i("GameFragment", "rotationUpdate:"+rotationUpdate);
+    }
+
 }

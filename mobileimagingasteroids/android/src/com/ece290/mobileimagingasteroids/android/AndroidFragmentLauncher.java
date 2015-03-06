@@ -3,6 +3,7 @@ package com.ece290.mobileimagingasteroids.android;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.ece290.mobileimagingasteroids.android.Fragment.GameFragment;
 
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -184,6 +185,10 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
             Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
+
+            GameFragment gameFragment = (GameFragment)getSupportFragmentManager().findFragmentById(R.id.game_fragment);
+            gameFragment.onRotationUpdate(37);
+
         }
 
         return mRgba;
