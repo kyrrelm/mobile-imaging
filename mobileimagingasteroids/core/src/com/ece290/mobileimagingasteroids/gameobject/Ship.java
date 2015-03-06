@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Polygon;
  */
 public class Ship extends GameObject {
 
-    private float COOLDOWN_TIME = 3; //TODO
+    private final float COOLDOWN_TIME = 3; //TODO
 
     private float shotCooldown = 0;
 
