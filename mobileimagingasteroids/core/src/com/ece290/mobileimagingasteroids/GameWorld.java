@@ -1,11 +1,10 @@
 package com.ece290.mobileimagingasteroids;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.math.Vector2;
+import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Shot;
 import com.ece290.mobileimagingasteroids.gameobject.GameObject;
@@ -27,7 +26,6 @@ public class GameWorld {
     private int lives;
     private int score;
 
-    private int temp = 100;
     private float runTime;
     private float asteroidSpawnTime;
 
@@ -57,6 +55,29 @@ public class GameWorld {
 
         mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
         mShip.setVelocityY(-30);
+
+        TouchGestureListener.addListenser(new ControlsListener() {
+            @Override
+            public void onRotationUpdate(int rotationUpdate) {
+                mShip.setRotationUpdate(rotationUpdate);
+
+            }
+
+            @Override
+            public void onVelocityUpdate(float velX, float velY) {
+                /*
+                mShip.mVelocity = mShip.mVelocity.add(new Vector2(velX, velY).rotate(mShip.getRotation()));
+                mShip.setRotationUpdate(mShip.getRotation());
+                */
+            }
+
+            @Override
+            public void onShoot() {
+                Shot shot = mShip.shoot();
+                if(shot != null)
+                    shots.add(shot);
+            }
+        });
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
@@ -84,12 +105,6 @@ public class GameWorld {
             s.update(delta);
         }
 
-        temp--;
-        if(temp < 0) {
-            shots.add(mShip.shoot());
-            temp = 100;
-        }
-
         //TODO also will need collision for shooting
 
         if(hasCrashed){
@@ -103,7 +118,7 @@ public class GameWorld {
         for (Shot s : shots) {
             for (Asteroid a : asteroids) {
                 if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
-                    System.out.println("BULLET HIT");
+                    //System.out.println("BULLET HIT");
                 }
             }
         }

@@ -24,6 +24,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -168,24 +169,57 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 HashSet<Point> fingerPoints = new HashSet<Point>();
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
-                for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 10000) {
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(0, 0, 255));
-                        if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)])){
-                            fingerTipCandidats.add(contourPts[convexityDefectsList.get(i - 1)]);
-                        }
-                        if(!fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)])){
-                            fingerTipCandidats.add(contourPts[convexityDefectsList.get(i - 2)]);
-                        }
-                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i-1)], 10, new Scalar(0, 0, 255));
-                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i-2)], 10, new Scalar(0, 0, 255));
+                List<Point> enclosingCircle = new ArrayList<Point>();
+                for(int i=0; i<convexityDefectsList.size(); i+=4)
+                {
+                    //if(convexityDefectsList.get(i+3) > 10000) {
+                    double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
+                    System.out.println("area:" + area);
+                    if(area > 1200) {
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+
+                    }
+                    if(area > 2400)
+                    {
+                        enclosingCircle.add(contourPts[convexityDefectsList.get(i + 2)]);
                     }
                 }
-                HashSet<Point> done = new HashSet<Point>();
+                try {
+                    Point c1 = new Point();
+                    float r[] = new float[10];
+                    MatOfPoint2f m2 = new MatOfPoint2f();
+                    m2.fromList(enclosingCircle);
+                    Imgproc.minEnclosingCircle(m2, c1, r);
+                    Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
+                }
+                catch (Exception e)
+                {
+
+                }
+
+                for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
+                    if (convexityDefectsList.get(i+1) > 1000) {
+
+                        double x0 = contourPts[convexityDefectsList.get(i - 2)].x - contourPts[convexityDefectsList.get(i)].x;
+                        double y0 = contourPts[convexityDefectsList.get(i - 2)].y - contourPts[convexityDefectsList.get(i)].y;
+                        double x1 = contourPts[convexityDefectsList.get(i - 1)].x - contourPts[convexityDefectsList.get(i)].x;
+                        double y1 = contourPts[convexityDefectsList.get(i - 1)].y - contourPts[convexityDefectsList.get(i)].y;
+
+                        double angle = Math.atan2(x0, y0)-Math.atan2(x1, y1);
+
+                        if (Math.abs(angle) < 1.8){
+                            fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)]);
+                            fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)]);
+                        }
+                    }
+                }
+                HashSet<Point> done = new HashSet<>();
                 for (Point p0: fingerPoints){
                     for (Point p1: fingerPoints){
-                        double diff = Math.hypot((Math.abs(p0.x - p1.x)), (Math.abs(p0.y - p1.y)));
                         if (!done.contains(p0) && !done.contains(p1) && !p0.equals(p1)){
+                            double diff = Math.hypot((Math.abs(p0.x - p1.x)), (Math.abs(p0.y - p1.y)));
                             if (diff < 40){
                                 fingerTipCandidats.add(new Point((p0.x + p1.x) / 2, (p0.y + p1.y) / 2));
                                 done.add(p0);
@@ -194,6 +228,12 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                         }
                     }
                 }
+                for (Point p: fingerPoints){
+                    if (!done.contains(p)){
+                        fingerTipCandidats.add(p);
+                    }
+                }
+
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
@@ -293,6 +333,12 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         Imgproc.cvtColor(pointMatHsv, pointMatRgba, Imgproc.COLOR_HSV2RGB_FULL, 4);
 
         return new Scalar(pointMatRgba.get(0, 0));
+    }
+
+
+    private double calcAreaTriangle(Point a, Point b, Point c)
+    {
+        return Math.abs(   (a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y) )/2.0  );
     }
 
 }

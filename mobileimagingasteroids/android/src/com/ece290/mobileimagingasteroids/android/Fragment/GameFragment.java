@@ -1,8 +1,11 @@
 package com.ece290.mobileimagingasteroids.android.Fragment;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.input.GestureDetector;
 import com.ece290.mobileimagingasteroids.MobileImagingAsteroids;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 
 import android.os.Bundle;
 
