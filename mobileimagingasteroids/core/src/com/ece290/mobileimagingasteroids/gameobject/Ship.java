@@ -1,7 +1,11 @@
 package com.ece290.mobileimagingasteroids.gameobject;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+
 
 /**
  * Created by ethan_000 on 2/17/2015.
@@ -12,6 +16,8 @@ public class Ship extends GameObject {
     private final float SPEED = 5;
 
     private float shotCooldown = 0;
+
+    private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("shot_sound.mp3"));
 
     public Ship(int width, int height, float positionX, float positionY)
     {
@@ -25,11 +31,12 @@ public class Ship extends GameObject {
         //float velX = mVelocity.cpy().rotate(getRotation());//(float)Math.sin(Math.toRadians(getRotation()))*SPEED);
         //float velY = ;//(float)Math.cos(Math.toRadians(getRotation()))*SPEED);
 
-
-
         Shot shot = new Shot(getX()+getWidth()/2, getY()+getHeight()/2, vel.x*SPEED, vel.y*SPEED);
         shot.setRotation(getRotation());
         shotCooldown = COOLDOWN_TIME;
+
+
+        //shotSound.play();
 
         return shot;
     }
