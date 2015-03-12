@@ -169,36 +169,6 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 HashSet<Point> fingerPoints = new HashSet<Point>();
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
-                List<Point> enclosingCircle = new ArrayList<Point>();
-                for(int i=0; i<convexityDefectsList.size(); i+=4)
-                {
-                    //if(convexityDefectsList.get(i+3) > 10000) {
-                    double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
-                    System.out.println("area:" + area);
-                    if(area > 1200) {
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
-
-                    }
-                    if(area > 2400)
-                    {
-                        enclosingCircle.add(contourPts[convexityDefectsList.get(i + 2)]);
-                    }
-                }
-                try {
-                    Point c1 = new Point();
-                    float r[] = new float[10];
-                    MatOfPoint2f m2 = new MatOfPoint2f();
-                    m2.fromList(enclosingCircle);
-                    Imgproc.minEnclosingCircle(m2, c1, r);
-                    Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
-                }
-                catch (Exception e)
-                {
-
-                }
-
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
                     if (convexityDefectsList.get(i+1) > 1000) {
 
