@@ -88,7 +88,7 @@ public class GameWorld {
         for (Shot s : shots) {
             for (Asteroid a : asteroids) {
                 if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
-                    System.out.println("BULLET HIT");
+                    //System.out.println("BULLET HIT");
                 }
             }
         }
@@ -97,7 +97,7 @@ public class GameWorld {
         {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
-                System.out.println("SHIP HIT");
+                //System.out.println("SHIP HIT");
             }
         }
 
