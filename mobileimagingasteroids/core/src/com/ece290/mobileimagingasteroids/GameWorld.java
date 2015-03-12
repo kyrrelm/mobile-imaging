@@ -2,6 +2,7 @@ package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -33,7 +34,12 @@ public class GameWorld {
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
+    private int deadTime = 1000;
+
     private boolean isGameOver;
+    private boolean hasCrashed = false;
+
+    private Sound crashSound = Gdx.audio.newSound(Gdx.files.internal("crash_sound.mp3"));
 
     public GameWorld(int width, int height)
     {
@@ -85,6 +91,15 @@ public class GameWorld {
         }
 
         //TODO also will need collision for shooting
+
+        if(hasCrashed){
+            deadTime-=delta;
+            if(deadTime<=0){
+                hasCrashed = false;
+                deadTime = 1000;
+            }
+        }
+
         for (Shot s : shots) {
             for (Asteroid a : asteroids) {
                 if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
@@ -97,10 +112,13 @@ public class GameWorld {
         {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
-                System.out.println("SHIP HIT");
+                if(!hasCrashed){
+                    System.out.println("SHIP HIT");
+                    crashSound.play();
+                    hasCrashed = true;
+                }
             }
         }
-
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)
