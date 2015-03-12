@@ -168,6 +168,22 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 HashSet<Point> fingerPoints = new HashSet<Point>();
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
+                //print all the convexity defects
+                for(int i=0; i<convexityDefectsList.size(); i+=4)
+                {
+                    //if(convexityDefectsList.get(i+3) > 10000) {
+                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
+                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+                    //System.out.println("Points: "+ contourPts[convexityDefectsList.get(i)]);
+                    //System.out.println("Area: "+ calcAreaTriangle(
+                     //       contourPts[convexityDefectsList.get(i)],
+                     //       contourPts[convexityDefectsList.get(i+1)],
+                     //       contourPts[convexityDefectsList.get(i+2)]));
+                    //}
+
+                }
+
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
                     if (convexityDefectsList.get(i+1) > 1000) {
 
@@ -178,7 +194,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
                         double angle = Math.atan2(x0, y0)-Math.atan2(x1, y1);
 
-                        if (Math.abs(angle) < 1.8){
+                        if (Math.abs(angle) < 2.3){
                             fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)]);
                             fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)]);
                         }
