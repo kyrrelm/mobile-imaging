@@ -22,7 +22,6 @@ public class GameWorld {
     private List<Asteroid> asteroids;
     private List<Shot> shots;
 
-    private int lives;
     private int score;
 
     private float runTime;
@@ -75,6 +74,11 @@ public class GameWorld {
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
+
+        if(mShip.isDead()) {
+            return;
+        }
+
         runTime += delta;
 
         if(runTime > asteroidSpawnTime)

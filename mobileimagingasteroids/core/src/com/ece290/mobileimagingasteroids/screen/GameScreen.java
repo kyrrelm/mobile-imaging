@@ -24,9 +24,8 @@ public class GameScreen implements Screen {
 
         world = new GameWorld(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         renderer = new GameRenderer(world);
-
-
     }
+
     @Override
     public void render(float delta) {
         //Gdx.app.log("GameScreen", "render");
