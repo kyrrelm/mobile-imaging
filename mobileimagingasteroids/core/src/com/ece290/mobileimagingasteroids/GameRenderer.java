@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.input.GestureDetector;
+import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 import com.ece290.mobileimagingasteroids.gameobject.Shot;
@@ -31,6 +33,9 @@ public class GameRenderer {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(cam.combined);
+
+        GestureDetector gd = new GestureDetector(new TouchGestureListener());
+        Gdx.input.setInputProcessor(gd);
     }
     public void render() {
         //Gdx.app.log("GameRenderer", "render");
