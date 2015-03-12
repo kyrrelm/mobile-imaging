@@ -304,4 +304,10 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         return new Scalar(pointMatRgba.get(0, 0));
     }
 
+
+    private double calcAreaTriangle(Point a, Point b, Point c)
+    {
+        return Math.abs(   (a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y) )/2.0  );
+    }
+
 }
