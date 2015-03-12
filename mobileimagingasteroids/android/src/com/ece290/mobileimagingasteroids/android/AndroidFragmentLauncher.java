@@ -24,6 +24,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -168,19 +169,33 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 HashSet<Point> fingerPoints = new HashSet<Point>();
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
-                //print all the convexity defects
+                List<Point> enclosingCircle = new ArrayList<Point>();
                 for(int i=0; i<convexityDefectsList.size(); i+=4)
                 {
                     //if(convexityDefectsList.get(i+3) > 10000) {
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
-                    //System.out.println("Points: "+ contourPts[convexityDefectsList.get(i)]);
-                    //System.out.println("Area: "+ calcAreaTriangle(
-                     //       contourPts[convexityDefectsList.get(i)],
-                     //       contourPts[convexityDefectsList.get(i+1)],
-                     //       contourPts[convexityDefectsList.get(i+2)]));
-                    //}
+                    double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
+                    System.out.println("area:" + area);
+                    if(area > 1200) {
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+
+                    }
+                    if(area > 2400)
+                    {
+                        enclosingCircle.add(contourPts[convexityDefectsList.get(i + 2)]);
+                    }
+                }
+                try {
+                    Point c1 = new Point();
+                    float r[] = new float[10];
+                    MatOfPoint2f m2 = new MatOfPoint2f();
+                    m2.fromList(enclosingCircle);
+                    Imgproc.minEnclosingCircle(m2, c1, r);
+                    Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
+                }
+                catch (Exception e)
+                {
 
                 }
 
@@ -194,7 +209,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
                         double angle = Math.atan2(x0, y0)-Math.atan2(x1, y1);
 
-                        if (Math.abs(angle) < 2.3){
+                        if (Math.abs(angle) < 1.8){
                             fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)]);
                             fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)]);
                         }
