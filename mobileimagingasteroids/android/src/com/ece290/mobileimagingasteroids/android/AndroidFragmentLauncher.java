@@ -32,8 +32,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 
 public class AndroidFragmentLauncher extends FragmentActivity implements AndroidFragmentApplication.Callbacks, CvCameraViewListener2, View.OnTouchListener {
@@ -165,11 +167,12 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 Imgproc.convexityDefects(handContour, convexHullMatOfInt, convexityDefects);
                 List<Integer> convexityDefectsList = convexityDefects.toList();
 
-                HashSet<Point> fingerPoints = new HashSet<Point>();
+                //<Point, isStartpoint()>
+                HashMap<Point, Boolean> fingerPoints = new HashMap<Point, Boolean>();
                 ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
 
                 for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 1000) {
+                    if (convexityDefectsList.get(i+1) > 100) {
 
                         double x0 = contourPts[convexityDefectsList.get(i - 2)].x - contourPts[convexityDefectsList.get(i)].x;
                         double y0 = contourPts[convexityDefectsList.get(i - 2)].y - contourPts[convexityDefectsList.get(i)].y;
@@ -179,25 +182,30 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                         double angle = Math.atan2(x0, y0)-Math.atan2(x1, y1);
 
                         if (Math.abs(angle) < 1.8){
-                            fingerPoints.add(contourPts[convexityDefectsList.get(i - 1)]);
-                            fingerPoints.add(contourPts[convexityDefectsList.get(i - 2)]);
+                            fingerPoints.put(contourPts[convexityDefectsList.get(i - 2)], true);
+                            fingerPoints.put(contourPts[convexityDefectsList.get(i - 1)], false);
                         }
                     }
                 }
                 HashSet<Point> done = new HashSet<>();
-                for (Point p0: fingerPoints){
-                    for (Point p1: fingerPoints){
-                        if (!done.contains(p0) && !done.contains(p1) && !p0.equals(p1)){
-                            double diff = Math.hypot((Math.abs(p0.x - p1.x)), (Math.abs(p0.y - p1.y)));
-                            if (diff < 40){
-                                fingerTipCandidats.add(new Point((p0.x + p1.x) / 2, (p0.y + p1.y) / 2));
-                                done.add(p0);
-                                done.add(p1);
+                for (Map.Entry<Point, Boolean> entry0: fingerPoints.entrySet()){
+                    for (Map.Entry<Point, Boolean> entry1: fingerPoints.entrySet()){
+                        if (!done.contains(entry0.getKey()) && !done.contains(entry1.getKey()) && !entry0.getKey().equals(entry1.getKey())){
+                            double diff = Math.hypot((Math.abs(entry0.getKey().x - entry1.getKey().x)), (Math.abs(entry0.getKey().y - entry1.getKey().y)));
+                            if (diff < 60 && entry0.getValue() != entry1.getValue()){
+                                //fingerTipCandidats.add(new Point((entry0.getKey().x + entry1.getKey().x) / 2, (entry0.getKey().y + entry1.getKey().y) / 2));
+                                if (!entry0.getValue()){
+                                    fingerTipCandidats.add(new Point((entry0.getKey().x), (entry0.getKey().y)));
+                                } else {
+                                    fingerTipCandidats.add(new Point((entry1.getKey().x), (entry1.getKey().y)));
+                                }
+                                done.add(entry0.getKey());
+                                done.add(entry1.getKey());
                             }
                         }
                     }
                 }
-                for (Point p: fingerPoints){
+                for (Point p: fingerPoints.keySet()){
                     if (!done.contains(p)){
                         fingerTipCandidats.add(p);
                     }
@@ -207,17 +215,15 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
 
-                HashSet<Point> fingerTips = new HashSet<Point>();
+                ArrayList<Point> fingerTips = new ArrayList<>();
                 //TODO: Draw for debug
                 for (Point p: fingerTipCandidats){
                     //if (p.x < centroid.x){
                         fingerTips.add(p);
-                        Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
-                        Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
                     //}
                 }
 
-                GestureDetector.detect(fingerTips,centroid);
+                GestureDetector.detect(fingerTips,centroid,mRgba);
                 Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
                 List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
                 hax.add(convexHullMatOfPoints);

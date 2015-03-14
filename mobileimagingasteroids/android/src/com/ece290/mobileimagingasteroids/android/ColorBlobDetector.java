@@ -70,6 +70,7 @@ public class ColorBlobDetector {
     public void process(Mat rgbaImage) {
         Imgproc.pyrDown(rgbaImage, mPyrDownMat);
         Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
+        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
 
         Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
@@ -96,7 +97,7 @@ public class ColorBlobDetector {
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
+                Core.multiply(contour, new Scalar(8,8), contour);
                 mContours.add(contour);
             }
         }
