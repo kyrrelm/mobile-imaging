@@ -33,7 +33,7 @@ public class GameWorld {
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
-    private int deadTime = 1000;
+    private int deadTime = 300;
 
     private boolean isGameOver;
     private boolean hasCrashed = false;
@@ -114,7 +114,7 @@ public class GameWorld {
             deadTime-=delta;
             if(deadTime<=0){
                 hasCrashed = false;
-                deadTime = 1000;
+                deadTime = 300;
             }
         }
 
