@@ -12,6 +12,7 @@ import com.ece290.mobileimagingasteroids.gameobject.GameObject;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class GameWorld {
     private Ship mShip;
 
     private List<Asteroid> asteroids;
-    private List<Shot> shots;
+    private List<Shot> shots = new ArrayList<Shot>();
 
     private int score;
 
@@ -45,9 +46,6 @@ public class GameWorld {
         this.mHeight = height;
         asteroids = new ArrayList<Asteroid>();
         asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
-
-        shots = new ArrayList<Shot>();
-        shots.add(new Shot(50, 50, 20, 20));
 
         asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
 
@@ -146,6 +144,14 @@ public class GameWorld {
                     }
                     asteroids.remove(i);
                 }
+            }
+        }
+
+        Iterator<Shot> itr = shots.iterator();
+        if (itr.hasNext()) {
+            Shot currentShot = itr.next();
+            if (!isGameObjectInScreenBounds(currentShot)){
+                shots.remove(currentShot);
             }
         }
 
