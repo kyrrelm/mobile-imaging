@@ -25,13 +25,52 @@ public class GestureDetector {
         //Log.d("Angle","count: "+count);
         Point middleFinger = findMiddleFinger(fingerTips,centroid);
         if (middleFinger != null){
-            Core.circle(mRgba, middleFinger, 20, new Scalar(200, 200, 255));
             Point thumb = findThumb(centroid, middleFinger, fingerTips);
             if (thumb != null){
-                Core.circle(mRgba, thumb, 25, new Scalar(200, 0, 255));
+                Point indexFinger = findIndexFinger(middleFinger, thumb, fingerTips);
+                Point ringFinger = findRingFinger(middleFinger,thumb, indexFinger, fingerTips);
+                Point littleFinger = findLittleFinger(middleFinger,thumb, indexFinger, ringFinger, fingerTips);
             }
         }
         count++;
+    }
+
+    private static Point findLittleFinger(Point middleFinger, Point thumb, Point indexFinger, Point ringFinger, ArrayList<Point> fingerTips) {
+        for (Point p: fingerTips){
+            if (!p.equals(thumb) && !p.equals(middleFinger) && !p.equals(indexFinger) && !p.equals(ringFinger)){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private static Point findRingFinger(Point middleFinger, Point thumb, Point indexFinger, ArrayList<Point> fingerTips) {
+        double distance = Double.MAX_VALUE;
+        Point ringFinger = null;
+        for (Point p: fingerTips){
+            if (!p.equals(thumb) && !p.equals(middleFinger) && !p.equals(indexFinger)){
+                if (distance(p, middleFinger) < distance){
+                    ringFinger = p;
+                    distance = distance(p, middleFinger);
+                }
+            }
+        }
+        return ringFinger;
+    }
+
+    private static Point findIndexFinger(Point middleFinger, Point thumb, ArrayList<Point> fingerTips) {
+        double distance = Double.MAX_VALUE;
+        Point indexFinger = null;
+        for (Point p : fingerTips){
+            if (!p.equals(thumb) && !p.equals(middleFinger)){
+                double temp = distance(middleFinger, p)+distance(thumb,p);
+                if (temp < distance){
+                    distance = temp;
+                    indexFinger = p;
+                }
+            }
+        }
+        return indexFinger;
     }
 
     private static Point findThumb(Point centroid, Point middleFinger, ArrayList<Point> fingerTips) {
