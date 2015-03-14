@@ -57,7 +57,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                 {
-                    //mOpenCvCameraView.enableFpsMeter();
+                    mOpenCvCameraView.enableFpsMeter();
                     mOpenCvCameraView.enableView();
                     mOpenCvCameraView.setOnTouchListener(AndroidFragmentLauncherV2.this);
                 } break;
@@ -178,6 +178,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                     //if(convexityDefectsList.get(i+3) > 10000) {
                     double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
                     System.out.println("area:" + area);
+
                     if(area > 1200 && convexityDefectsList.get(i+3) > 500) {
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
@@ -195,7 +196,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                         enclosingCircle.add(contourPts[convexityDefectsList.get(i + 2)]);
                     }
                 }
-                try {
+                /*try {
                     Point c1 = new Point();
                     float r[] = new float[10];
                     MatOfPoint2f m2 = new MatOfPoint2f();
@@ -206,7 +207,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 catch (Exception e)
                 {
 
-                }
+                }*/
 
                 for(int i=0; i<filteredConvexityDefectsList.size();i+=4)
                 {
@@ -221,10 +222,10 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                         nextStart = contourPts[filteredConvexityDefectsList.get(i+4)];
                     }
 
-                    //if(Math.hypot(end.x-nextStart.x, end.y-nextStart.y) < 100.0) {
+                    if(Math.hypot(end.x-nextStart.x, end.y-nextStart.y) < 100.0) {
                         Point p = new Point((end.x+nextStart.x)/2.0, (end.y+nextStart.y)/2.0);
                         Core.line(mRgba, p, centroid, new Scalar(150, 50, 50), 10);
-                    //}
+                    }
                 }
 
                 Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
@@ -233,6 +234,12 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
 
                 Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+
+                // Get bounding rect of contour
+                Rect rect = Imgproc.boundingRect(handContour);
+                // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
+                Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 255), 3);
+
 
 
             }
