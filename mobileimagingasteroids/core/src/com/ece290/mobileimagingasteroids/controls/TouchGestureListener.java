@@ -12,14 +12,32 @@ import java.util.List;
  */
 public class TouchGestureListener implements GestureDetector.GestureListener {
 
+    /** Temporary class to test controlling the game.
+     *
+     *  <p>
+     *      Should probably use the Singleton pattern instad of being static for the final implementation
+     *  </p>
+     *
+     *  @author Hallvard
+     */
     public TouchGestureListener(){}
 
+    /**
+     * Listeners subscribing to notifications.
+     */
     private static List<ControlsListener> listeners = new ArrayList<ControlsListener>();
 
+    /**
+     *  Add a listener to the list
+     * @param listener
+     */
     public static void addListenser(ControlsListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Send shoot command through to all listeners.
+     */
     @Override
     public boolean tap(float x, float y, int count, int button) {
 
@@ -28,6 +46,9 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
         return true;
     }
 
+    /**
+     *  Pinching is used to rotate the ship. Notifies all listeners when this happens.
+     */
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
 
@@ -59,14 +80,9 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
         return true;
     }
 
-    //----- Not used-----//
-
-
-    @Override
-    public boolean longPress(float x, float y) {
-        return false;
-    }
-
+    /**
+     * Flinging used update velocity on the ship
+     */
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
 /*
@@ -74,6 +90,14 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
             cl.onVelocityUpdate(velocityX/10, velocityY/10);
         }
         */
+        //return true;
+        return false;
+    }
+
+    //--- NOT USED --------//
+
+    @Override
+    public boolean longPress(float x, float y) {
         return false;
     }
 

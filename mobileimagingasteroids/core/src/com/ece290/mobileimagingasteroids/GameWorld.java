@@ -33,7 +33,7 @@ public class GameWorld {
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
-    private int deadTime = 1000;
+    private int deadTime = 300;
 
     private boolean isGameOver;
     private boolean hasCrashed = false;
@@ -77,6 +77,7 @@ public class GameWorld {
             }
         });
     }
+
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
 
@@ -114,32 +115,39 @@ public class GameWorld {
             deadTime-=delta;
             if(deadTime<=0){
                 hasCrashed = false;
-                deadTime = 1000;
+                deadTime = 300;
             }
         }
 
         List<Asteroid> astrCopy = asteroids;
-        for (Shot s : shots) {
+        Iterator<Shot> shotItr = shots.iterator();
+        if (shotItr.hasNext()) {
+            Shot currShot = shotItr.next();
             for (int i = 0; i < astrCopy.size(); i++) {
-                Asteroid currHit = asteroids.get(i);
+                Asteroid currAsteroid = asteroids.get(i);
 
-                if (Intersector.overlapConvexPolygons(s.getPolygon(), currHit.getPolygon())) {
+                if (Intersector.overlapConvexPolygons(currShot.getPolygon(), currAsteroid.getPolygon())) {
                     System.out.println("BULLET HIT");
 
-                    if (currHit.getWidth() > mWidth / 12 && currHit.getHeight() > mHeight / 12) {
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                    shots.remove(currShot);
 
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                    if (currAsteroid.getWidth() > mWidth / 12 && currAsteroid.getHeight() > mHeight / 12) {
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX() + MathUtils.random(5, 20),
+                                currAsteroid.getVelocityY() + MathUtils.random(5, 20)));
+
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX() + MathUtils.random(5, 20),
+                                currAsteroid.getVelocityY() + MathUtils.random(5, 20)));
+
+                        randomizeAsteroidVelocityOnSplit(asteroids.get(asteroids.size()-1),
+                                                         asteroids.get(asteroids.size()-2));
                         asteroids.remove(i);
                     }
                     asteroids.remove(i);
@@ -166,6 +174,16 @@ public class GameWorld {
                 }
             }
         }
+    }
+
+    private void randomizeAsteroidVelocityOnSplit(Asteroid a1, Asteroid a2) {
+        a1.setVelocityX(MathUtils.random(0, 70));
+        a1.setVelocityY(MathUtils.random(0, 70));
+        a2.setVelocityX(MathUtils.random(0, 70));
+        a2.setVelocityX(MathUtils.random(0, 70));
+
+        a1.rotate(MathUtils.random(0, 30));
+        a2.rotate(MathUtils.random(0, 30));
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)
