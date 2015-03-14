@@ -51,6 +51,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     private Mat                  mSpectrum;
     private Size SPECTRUM_SIZE;
     private Scalar CONTOUR_COLOR;
+    private Point centroid;
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -101,14 +102,18 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     }
 
     public boolean onTouch(View v, MotionEvent event) {
+        return findContour(event.getX(), event.getY());
+    }
+
+    private boolean findContour(float xCord, float yCord){
         int cols = mRgba.cols();
         int rows = mRgba.rows();
 
         int xOffset = (mOpenCvCameraView.getWidth() - cols) / 2;
         int yOffset = (mOpenCvCameraView.getHeight() - rows) / 2;
 
-        int x = (int)event.getX() - xOffset;
-        int y = (int)event.getY() - yOffset;
+        int x = (int)xCord - xOffset;
+        int y = (int)yCord - yOffset;
 
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
 
@@ -148,10 +153,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         touchedRegionHsv.release();
 
         return false; // don't need subsequent touch events
-
-
     }
-
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         if (mIsColorSelected) {
@@ -160,6 +162,9 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
 
             if (!contours.isEmpty()) {
+                if (centroid != null){
+                    //findContour((float)centroid.x, (float)centroid.y);
+                }
                 MatOfPoint handContour = findBiggestContour(contours);
                 Point[] contourPts = handContour.toArray();
                 MatOfInt convexHullMatOfInt = new MatOfInt();
@@ -214,7 +219,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
-                Point centroid = centerOfMass(convexHullMatOfPoints);
+                centroid = centerOfMass(convexHullMatOfPoints);
 
                 ArrayList<Point> fingerTips = new ArrayList<>();
                 //TODO: Draw for debug
