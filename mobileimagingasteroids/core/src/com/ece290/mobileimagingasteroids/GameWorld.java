@@ -77,6 +77,7 @@ public class GameWorld {
             }
         });
     }
+
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
 
@@ -140,6 +141,7 @@ public class GameWorld {
                                 currHit.getY(),
                                 currHit.getVelocityX() + MathUtils.random(5, 20),
                                 currHit.getVelocityY() + MathUtils.random(5, 20)));
+
                         asteroids.remove(i);
                     }
                     asteroids.remove(i);

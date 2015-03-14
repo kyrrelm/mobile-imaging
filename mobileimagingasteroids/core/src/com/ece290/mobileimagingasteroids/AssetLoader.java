@@ -14,6 +14,8 @@ public class AssetLoader{
     public static Sprite shipSprite;
     public static Texture asteroidTexture;
     public static Sprite asteroidSprite;
+    public static Texture shotTexture;
+    public static Sprite shotSprite;
 
     public static void load()
     {
@@ -28,6 +30,11 @@ public class AssetLoader{
         asteroidTexture = new Texture(Gdx.files.internal("asteroid1.png"));
         asteroidSprite = new Sprite(asteroidTexture);
         asteroidSprite.flip(false,true);
+
+        shotTexture = new Texture(Gdx.files.internal("laser.png"));
+        shotSprite = new Sprite(shotTexture);
+        shotSprite.flip(false, true);
+
     }
 
     public static void dispose() {

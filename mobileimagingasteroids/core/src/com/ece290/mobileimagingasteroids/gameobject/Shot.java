@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Polygon;
  */
 public class Shot extends GameObject{
     public Shot(float positionX, float positionY, float velocityX, float velocityY){
-        super(5, 5, positionX, positionY, velocityX, velocityY);
+        super(10, 20, positionX, positionY, velocityX, velocityY);
     }
     protected Polygon getPolygonInternal() {
         Polygon p = new Polygon(new float[]{
