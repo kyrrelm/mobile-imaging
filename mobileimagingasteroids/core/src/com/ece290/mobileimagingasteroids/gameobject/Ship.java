@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 
 /**
+ * Ship class of the Asteroids game
+ *
  * Created by ethan_000 on 2/17/2015.
  */
 public class Ship extends GameObject {
@@ -67,6 +69,14 @@ public class Ship extends GameObject {
                 (1f/8f)*mWidth,(2f/3f)*mHeight});
         p.setOrigin(mWidth/2, mHeight/2);
         return p;
+    }
+
+    /**
+     * To be called if the ship crashes
+     * <p>Then it will reduce the number of lives</p>
+     */
+    public void crashed() {
+        if(--lives <= 0)    isDead = true;
     }
 
     public boolean isDead(){ return isDead;}
