@@ -33,13 +33,11 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 
-public class AndroidFragmentLauncher extends FragmentActivity implements AndroidFragmentApplication.Callbacks, CvCameraViewListener2, View.OnTouchListener {
+public class AndroidFragmentLauncherV2 extends FragmentActivity implements AndroidFragmentApplication.Callbacks, CvCameraViewListener2, View.OnTouchListener {
     private static final String  TAG              = "AndroidFragmentLauncher";
 
     private JavaCameraView mOpenCvCameraView;
@@ -61,7 +59,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 {
                     //mOpenCvCameraView.enableFpsMeter();
                     mOpenCvCameraView.enableView();
-                    mOpenCvCameraView.setOnTouchListener(AndroidFragmentLauncher.this);
+                    mOpenCvCameraView.setOnTouchListener(AndroidFragmentLauncherV2.this);
                 } break;
                 default:
                 {
@@ -92,7 +90,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
-        CONTOUR_COLOR = new Scalar(255,0,0,255);
+        CONTOUR_COLOR = new Scalar(255,0,255,255);
 
     }
 
@@ -168,68 +166,77 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
                 Imgproc.convexityDefects(handContour, convexHullMatOfInt, convexityDefects);
                 List<Integer> convexityDefectsList = convexityDefects.toList();
 
-                //<Point, isStartpoint()>
-                HashMap<Point, Boolean> fingerPoints = new HashMap<Point, Boolean>();
-                ArrayList<Point> fingerTipCandidats = new ArrayList<Point>();
-
-                for (int i = 2; i < convexityDefectsList.size()-1; i+=4) {
-                    if (convexityDefectsList.get(i+1) > 100) {
-
-                        double x0 = contourPts[convexityDefectsList.get(i - 2)].x - contourPts[convexityDefectsList.get(i)].x;
-                        double y0 = contourPts[convexityDefectsList.get(i - 2)].y - contourPts[convexityDefectsList.get(i)].y;
-                        double x1 = contourPts[convexityDefectsList.get(i - 1)].x - contourPts[convexityDefectsList.get(i)].x;
-                        double y1 = contourPts[convexityDefectsList.get(i - 1)].y - contourPts[convexityDefectsList.get(i)].y;
-
-                        double angle = Math.atan2(x0, y0)-Math.atan2(x1, y1);
-
-                        if (Math.abs(angle) < 1.8){
-                            fingerPoints.put(contourPts[convexityDefectsList.get(i - 2)], true);
-                            fingerPoints.put(contourPts[convexityDefectsList.get(i - 1)], false);
-                        }
-                    }
-                }
-                HashSet<Point> done = new HashSet<>();
-                for (Map.Entry<Point, Boolean> entry0: fingerPoints.entrySet()){
-                    for (Map.Entry<Point, Boolean> entry1: fingerPoints.entrySet()){
-                        if (!done.contains(entry0.getKey()) && !done.contains(entry1.getKey()) && !entry0.getKey().equals(entry1.getKey())){
-                            double diff = Math.hypot((Math.abs(entry0.getKey().x - entry1.getKey().x)), (Math.abs(entry0.getKey().y - entry1.getKey().y)));
-                            if (diff < 60 && entry0.getValue() != entry1.getValue()){
-                                //fingerTipCandidats.add(new Point((entry0.getKey().x + entry1.getKey().x) / 2, (entry0.getKey().y + entry1.getKey().y) / 2));
-                                if (!entry0.getValue()){
-                                    fingerTipCandidats.add(new Point((entry0.getKey().x), (entry0.getKey().y)));
-                                } else {
-                                    fingerTipCandidats.add(new Point((entry1.getKey().x), (entry1.getKey().y)));
-                                }
-                                done.add(entry0.getKey());
-                                done.add(entry1.getKey());
-                            }
-                        }
-                    }
-                }
-                for (Point p: fingerPoints.keySet()){
-                    if (!done.contains(p)){
-                        fingerTipCandidats.add(p);
-                    }
-                }
-
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
 
-                ArrayList<Point> fingerTips = new ArrayList<>();
-                //TODO: Draw for debug
-                for (Point p: fingerTipCandidats){
-                    //if (p.x < centroid.x){
-                        fingerTips.add(p);
+                List<Integer> filteredConvexityDefectsList = new ArrayList<>();
+
+                List<Point> enclosingCircle = new ArrayList<Point>();
+                for(int i=0; i<convexityDefectsList.size(); i+=4)
+                {
+                    //if(convexityDefectsList.get(i+3) > 10000) {
+                    double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
+                    System.out.println("area:" + area);
+                    if(area > 1200 && convexityDefectsList.get(i+3) > 500) {
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
+                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+
+                        filteredConvexityDefectsList.add(convexityDefectsList.get(i));
+                        filteredConvexityDefectsList.add(convexityDefectsList.get(i+1));
+                        filteredConvexityDefectsList.add(convexityDefectsList.get(i+2));
+                        filteredConvexityDefectsList.add(convexityDefectsList.get(i+3));
+
+                    }
+
+                    if(area > 2400)
+                    {
+                        enclosingCircle.add(contourPts[convexityDefectsList.get(i + 2)]);
+                    }
+                }
+                try {
+                    Point c1 = new Point();
+                    float r[] = new float[10];
+                    MatOfPoint2f m2 = new MatOfPoint2f();
+                    m2.fromList(enclosingCircle);
+                    Imgproc.minEnclosingCircle(m2, c1, r);
+                    Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
+                }
+                catch (Exception e)
+                {
+
+                }
+
+                for(int i=0; i<filteredConvexityDefectsList.size();i+=4)
+                {
+                    Point end = contourPts[filteredConvexityDefectsList.get(i+1)];
+                    Point nextStart;
+                    if(i+4 > filteredConvexityDefectsList.size()-1)
+                    {
+                        nextStart = contourPts[filteredConvexityDefectsList.get(0)];
+                    }
+                    else
+                    {
+                        nextStart = contourPts[filteredConvexityDefectsList.get(i+4)];
+                    }
+
+                    //if(Math.hypot(end.x-nextStart.x, end.y-nextStart.y) < 100.0) {
+                        Point p = new Point((end.x+nextStart.x)/2.0, (end.y+nextStart.y)/2.0);
+                        Core.line(mRgba, p, centroid, new Scalar(150, 50, 50), 10);
                     //}
                 }
 
-                GestureDetector.detect(fingerTips,centroid,mRgba);
                 Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
                 List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
                 hax.add(convexHullMatOfPoints);
                 Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
+
+                Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+
+
             }
+
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
 

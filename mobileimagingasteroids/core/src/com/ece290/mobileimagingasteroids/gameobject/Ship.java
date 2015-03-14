@@ -12,10 +12,14 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Ship extends GameObject {
 
-    private final float COOLDOWN_TIME = 2; //TODO
-    private final float SPEED = 5;
+    private final float COOLDOWN_TIME = 10; //TODO
+    private final float SPEED = 250;
 
     private float shotCooldown = 0;
+
+    //Number of lives left
+    private int lives = 4;
+    private boolean isDead = false;
 
     private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("shot_sound.mp3"));
 
@@ -26,15 +30,14 @@ public class Ship extends GameObject {
 
     public Shot shoot() {
 
-        Vector2 vel = mVelocity.cpy().rotate(getRotation());
+        //if(shotCooldown > 0)
+          //  return null;
 
-        //float velX = mVelocity.cpy().rotate(getRotation());//(float)Math.sin(Math.toRadians(getRotation()))*SPEED);
-        //float velY = ;//(float)Math.cos(Math.toRadians(getRotation()))*SPEED);
+        Vector2 speed = new Vector2(0,-SPEED).rotate(getRotation());
 
-        Shot shot = new Shot(getX()+getWidth()/2, getY()+getHeight()/2, vel.x*SPEED, vel.y*SPEED);
+        Shot shot = new Shot(getX()+getWidth()/2, getY()+getHeight()/2, speed.x, speed.y);
         shot.setRotation(getRotation());
         shotCooldown = COOLDOWN_TIME;
-
 
         //shotSound.play();
 
@@ -65,4 +68,6 @@ public class Ship extends GameObject {
         p.setOrigin(mWidth/2, mHeight/2);
         return p;
     }
+
+    public boolean isDead(){ return isDead;}
 }

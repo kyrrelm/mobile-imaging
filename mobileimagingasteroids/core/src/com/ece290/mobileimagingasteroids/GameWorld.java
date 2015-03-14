@@ -1,10 +1,11 @@
 package com.ece290.mobileimagingasteroids;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Shot;
 import com.ece290.mobileimagingasteroids.gameobject.GameObject;
@@ -23,17 +24,20 @@ public class GameWorld {
     private List<Asteroid> asteroids;
     private List<Shot> shots;
 
-    private int lives;
     private int score;
 
-    private int temp = 100;
     private float runTime;
     private float asteroidSpawnTime;
 
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
+    private int deadTime = 1000;
+
     private boolean isGameOver;
+    private boolean hasCrashed = false;
+
+    private Sound crashSound = Gdx.audio.newSound(Gdx.files.internal("crash_sound.mp3"));
 
     public GameWorld(int width, int height)
     {
@@ -51,9 +55,37 @@ public class GameWorld {
 
         mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
         mShip.setVelocityY(-30);
+
+        TouchGestureListener.addListenser(new ControlsListener() {
+            @Override
+            public void onRotationUpdate(int rotationUpdate) {
+                mShip.setRotationUpdate(rotationUpdate);
+
+            }
+
+            @Override
+            public void onVelocityUpdate(float velX, float velY) {
+                /*
+                mShip.mVelocity = mShip.mVelocity.add(new Vector2(velX, velY).rotate(mShip.getRotation()));
+                mShip.setRotationUpdate(mShip.getRotation());
+                */
+            }
+
+            @Override
+            public void onShoot() {
+                Shot shot = mShip.shoot();
+                if(shot != null)
+                    shots.add(shot);
+            }
+        });
     }
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
+
+        if(mShip.isDead()) {
+            return;
+        }
+
         runTime += delta;
 
         if(runTime > asteroidSpawnTime)
@@ -78,17 +110,41 @@ public class GameWorld {
             s.update(delta);
         }
 
-        temp--;
-        if(temp < 0) {
-            shots.add(mShip.shoot());
-            temp = 100;
+        //TODO also will need collision for shooting
+
+        if(hasCrashed){
+            deadTime-=delta;
+            if(deadTime<=0){
+                hasCrashed = false;
+                deadTime = 1000;
+            }
         }
 
-        //TODO also will need collision for shooting
+        List<Asteroid> astrCopy = asteroids;
         for (Shot s : shots) {
-            for (Asteroid a : asteroids) {
-                if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
+            for (int i = 0; i < astrCopy.size(); i++) {
+                Asteroid currHit = asteroids.get(i);
+
+                if (Intersector.overlapConvexPolygons(s.getPolygon(), currHit.getPolygon())) {
                     System.out.println("BULLET HIT");
+
+                    if (currHit.getWidth() > mWidth / 12 && currHit.getHeight() > mHeight / 12) {
+                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
+                                Math.round(currHit.getHeight() / 2),
+                                currHit.getX(),
+                                currHit.getY(),
+                                currHit.getVelocityX() + MathUtils.random(5, 20),
+                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+
+                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
+                                Math.round(currHit.getHeight() / 2),
+                                currHit.getX(),
+                                currHit.getY(),
+                                currHit.getVelocityX() + MathUtils.random(5, 20),
+                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                        asteroids.remove(i);
+                    }
+                    asteroids.remove(i);
                 }
             }
         }
@@ -97,10 +153,13 @@ public class GameWorld {
         {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
-                System.out.println("SHIP HIT");
+                if(!hasCrashed){
+                    System.out.println("SHIP HIT");
+                    crashSound.play();
+                    hasCrashed = true;
+                }
             }
         }
-
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)
