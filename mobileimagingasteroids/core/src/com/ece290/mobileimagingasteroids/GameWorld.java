@@ -21,7 +21,7 @@ public class GameWorld {
     private Ship mShip;
 
     private List<Asteroid> asteroids;
-    private List<Shot> shots;
+    private List<Shot> shots = new ArrayList<Shot>();
 
     private int score;
 
@@ -44,9 +44,6 @@ public class GameWorld {
         this.mHeight = height;
         asteroids = new ArrayList<Asteroid>();
         asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
-
-        shots = new ArrayList<Shot>();
-        shots.add(new Shot(50, 50, 20, 20));
 
         asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
 
