@@ -12,6 +12,7 @@ import com.ece290.mobileimagingasteroids.gameobject.GameObject;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -143,6 +144,14 @@ public class GameWorld {
                     }
                     asteroids.remove(i);
                 }
+            }
+        }
+
+        Iterator<Shot> itr = shots.iterator();
+        if (itr.hasNext()) {
+            Shot currentShot = itr.next();
+            if (!isGameObjectInScreenBounds(currentShot)){
+                shots.remove(currentShot);
             }
         }
 
