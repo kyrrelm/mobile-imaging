@@ -58,6 +58,9 @@ public class GameRenderer {
             mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
         }
 
+        for(Shot s : world.getShots()) {
+            mSpriteBatch.draw(AssetLoader.shotSprite, s.getX(), s.getY(), s.getWidth()/2, s.getHeight()/2, s.getWidth(), s.getHeight(),1,1,s.getRotation());
+        }
 
         mSpriteBatch.end();
 
@@ -74,8 +77,10 @@ public class GameRenderer {
         for(Asteroid a : world.getAsteroids())
             shapeRenderer.polygon(a.getPolygon().getTransformedVertices());
 
+
         for(Shot s: world.getShots())
             shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
+
 
         shapeRenderer.end();
 

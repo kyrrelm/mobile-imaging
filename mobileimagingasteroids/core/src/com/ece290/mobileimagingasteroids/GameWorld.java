@@ -33,7 +33,7 @@ public class GameWorld {
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
-    private int deadTime = 1000;
+    private int deadTime = 300;
 
     private boolean isGameOver;
     private boolean hasCrashed = false;
@@ -77,6 +77,7 @@ public class GameWorld {
             }
         });
     }
+
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
 
@@ -114,7 +115,7 @@ public class GameWorld {
             deadTime-=delta;
             if(deadTime<=0){
                 hasCrashed = false;
-                deadTime = 1000;
+                deadTime = 300;
             }
         }
 
@@ -127,6 +128,7 @@ public class GameWorld {
 
                 if (Intersector.overlapConvexPolygons(currShot.getPolygon(), currAsteroid.getPolygon())) {
                     System.out.println("BULLET HIT");
+
                     shots.remove(currShot);
 
                     if (currAsteroid.getWidth() > mWidth / 12 && currAsteroid.getHeight() > mHeight / 12) {
