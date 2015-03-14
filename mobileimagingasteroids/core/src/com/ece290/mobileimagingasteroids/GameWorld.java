@@ -3,6 +3,7 @@ package com.ece290.mobileimagingasteroids;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
@@ -116,10 +117,31 @@ public class GameWorld {
             }
         }
 
+        List<Asteroid> astrCopy = asteroids;
         for (Shot s : shots) {
-            for (Asteroid a : asteroids) {
-                if (Intersector.overlapConvexPolygons(s.getPolygon(), a.getPolygon())) {
-                    //System.out.println("BULLET HIT");
+            for (int i = 0; i < astrCopy.size(); i++) {
+                Asteroid currHit = asteroids.get(i);
+
+                if (Intersector.overlapConvexPolygons(s.getPolygon(), currHit.getPolygon())) {
+                    System.out.println("BULLET HIT");
+
+                    if (currHit.getWidth() > mWidth / 12 && currHit.getHeight() > mHeight / 12) {
+                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
+                                Math.round(currHit.getHeight() / 2),
+                                currHit.getX(),
+                                currHit.getY(),
+                                currHit.getVelocityX() + MathUtils.random(5, 20),
+                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+
+                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
+                                Math.round(currHit.getHeight() / 2),
+                                currHit.getX(),
+                                currHit.getY(),
+                                currHit.getVelocityX() + MathUtils.random(5, 20),
+                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                        asteroids.remove(i);
+                    }
+                    asteroids.remove(i);
                 }
             }
         }
