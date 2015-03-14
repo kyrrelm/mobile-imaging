@@ -4,8 +4,10 @@ import android.util.Log;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,7 +17,6 @@ import java.util.HashSet;
  */
 public class GestureDetector {
     static int count = 0;
-
     public static void detect(ArrayList<Point> fingerTips, Point centroid, Mat mRgba) {
         for (Point p: fingerTips){
             Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
@@ -24,16 +25,37 @@ public class GestureDetector {
         //Log.d("Angle","count: "+count);
         Point middleFinger = findMiddleFinger(fingerTips,centroid);
         if (middleFinger != null){
-            Core.circle(mRgba, findMiddleFinger(fingerTips, centroid), 20, new Scalar(200, 200, 255));
-            double x = Math.abs(middleFinger.x - centroid.x);
-            double y = Math.abs(middleFinger.y - centroid.y);
-            double mag = Math.sqrt(x * x + y * y);
-            x = x/mag;
-            y = y/mag;
-            Point p = new Point(y,x);
-            Core.circle(mRgba, p, 15, new Scalar(150, 50, 255));
+            Core.circle(mRgba, middleFinger, 20, new Scalar(200, 200, 255));
+            Point thumb = findThumb(centroid, middleFinger, fingerTips);
+            if (thumb != null){
+                Core.circle(mRgba, thumb, 25, new Scalar(200, 0, 255));
+            }
         }
         count++;
+    }
+
+    private static Point findThumb(Point centroid, Point middleFinger, ArrayList<Point> fingerTips) {
+        double x = (centroid.x - middleFinger.x);
+        double y = (centroid.y - middleFinger.y);
+        double mag = Math.sqrt(x * x + y * y);
+        x = x/mag;
+        y = y/mag;
+        double temp = x;
+        x = -y;
+        y = temp;
+        Point p0 = new Point(centroid.x +(200*x),centroid.y+(200*y));
+        Point p1 = new Point(centroid.x-(200*x),centroid.y-(200*y));
+        MatOfPoint2f thumbFinder = new MatOfPoint2f(p0, p1);
+        double distance = -100000;
+        Point thumb = null;
+        for (Point p: fingerTips){
+            double tmp = Imgproc.pointPolygonTest(thumbFinder, p, true);
+            if (distance < tmp){
+                distance = tmp;
+                thumb = p;
+            }
+        }
+        return thumb;
     }
 
     public static double distance(Point p0, Point p1){

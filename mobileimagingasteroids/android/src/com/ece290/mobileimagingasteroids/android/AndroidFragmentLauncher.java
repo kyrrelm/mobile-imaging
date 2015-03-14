@@ -52,6 +52,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     private Size SPECTRUM_SIZE;
     private Scalar CONTOUR_COLOR;
     private Point centroid;
+    private int counter = 0;
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -155,6 +156,10 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         return false; // don't need subsequent touch events
     }
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        if (centroid != null && counter > 10){
+            //findContour((float)centroid.x, (float)centroid.y);
+            counter = 0;
+        }
         mRgba = inputFrame.rgba();
         if (mIsColorSelected) {
             mDetector.process(mRgba);
@@ -162,9 +167,6 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
 
             if (!contours.isEmpty()) {
-                if (centroid != null){
-                    //findContour((float)centroid.x, (float)centroid.y);
-                }
                 MatOfPoint handContour = findBiggestContour(contours);
                 Point[] contourPts = handContour.toArray();
                 MatOfInt convexHullMatOfInt = new MatOfInt();
@@ -243,7 +245,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
             GameFragment gameFragment = (GameFragment)getSupportFragmentManager().findFragmentById(R.id.game_fragment);
             gameFragment.onRotationUpdate(37);
-
+            counter++;
         }
 
         return mRgba;
