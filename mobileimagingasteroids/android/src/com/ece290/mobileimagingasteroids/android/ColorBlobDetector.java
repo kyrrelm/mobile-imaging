@@ -101,7 +101,7 @@ public class ColorBlobDetector {
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                //Core.multiply(contour, new Scalar(8,8), contour);
+                Core.multiply(contour, new Scalar(8,8), contour);
                 mContours.add(contour);
             }
         }
