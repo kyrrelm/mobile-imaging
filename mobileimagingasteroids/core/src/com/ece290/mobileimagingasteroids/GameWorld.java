@@ -143,6 +143,9 @@ public class GameWorld {
                                 currAsteroid.getY(),
                                 currAsteroid.getVelocityX() + MathUtils.random(5, 20),
                                 currAsteroid.getVelocityY() + MathUtils.random(5, 20)));
+
+                        randomizeAsteroidVelocityOnSplit(asteroids.get(asteroids.size()-1),
+                                                         asteroids.get(asteroids.size()-2));
                         asteroids.remove(i);
                     }
                     asteroids.remove(i);
@@ -169,6 +172,16 @@ public class GameWorld {
                 }
             }
         }
+    }
+
+    private void randomizeAsteroidVelocityOnSplit(Asteroid a1, Asteroid a2) {
+        a1.setVelocityX(MathUtils.random(0, 70));
+        a1.setVelocityY(MathUtils.random(0, 70));
+        a2.setVelocityX(MathUtils.random(0, 70));
+        a2.setVelocityX(MathUtils.random(0, 70));
+
+        a1.rotate(MathUtils.random(0, 30));
+        a2.rotate(MathUtils.random(0, 30));
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)
