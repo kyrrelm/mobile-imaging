@@ -120,28 +120,31 @@ public class GameWorld {
         }
 
         List<Asteroid> astrCopy = asteroids;
-        for (Shot s : shots) {
+        Iterator<Shot> shotItr = shots.iterator();
+        if (shotItr.hasNext()) {
+            Shot currShot = shotItr.next();
             for (int i = 0; i < astrCopy.size(); i++) {
-                Asteroid currHit = asteroids.get(i);
+                Asteroid currAsteroid = asteroids.get(i);
 
-                if (Intersector.overlapConvexPolygons(s.getPolygon(), currHit.getPolygon())) {
+                if (Intersector.overlapConvexPolygons(currShot.getPolygon(), currAsteroid.getPolygon())) {
                     System.out.println("BULLET HIT");
 
-                    if (currHit.getWidth() > mWidth / 12 && currHit.getHeight() > mHeight / 12) {
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                    shots.remove(currShot);
 
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                    if (currAsteroid.getWidth() > mWidth / 12 && currAsteroid.getHeight() > mHeight / 12) {
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX() + MathUtils.random(5, 20),
+                                currAsteroid.getVelocityY() + MathUtils.random(5, 20)));
 
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX() + MathUtils.random(5, 20),
+                                currAsteroid.getVelocityY() + MathUtils.random(5, 20)));
                         asteroids.remove(i);
                     }
                     asteroids.remove(i);

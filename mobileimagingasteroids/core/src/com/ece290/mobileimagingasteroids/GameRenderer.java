@@ -77,10 +77,10 @@ public class GameRenderer {
         for(Asteroid a : world.getAsteroids())
             shapeRenderer.polygon(a.getPolygon().getTransformedVertices());
 
-        /*
+
         for(Shot s: world.getShots())
             shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
-        */
+
 
         shapeRenderer.end();
 

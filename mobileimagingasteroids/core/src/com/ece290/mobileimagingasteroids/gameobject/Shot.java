@@ -7,15 +7,18 @@ import com.badlogic.gdx.math.Polygon;
  * Created by ingeborgoftedal on 06.03.15.
  */
 public class Shot extends GameObject{
+
+    public static final int SIZE = 15;
+    
     public Shot(float positionX, float positionY, float velocityX, float velocityY){
-        super(10, 20, positionX, positionY, velocityX, velocityY);
+        super(SIZE, SIZE, positionX, positionY, velocityX, velocityY);
     }
     protected Polygon getPolygonInternal() {
         Polygon p = new Polygon(new float[]{
-                0,0,
-                mWidth,0,
-                mWidth,mHeight,
-                0, mHeight});
+                (1f/4f)*mWidth,0,
+                (3f/4f)*mWidth,0,
+                (3f/4f)*mWidth, mHeight,
+                (1f/4f)*mWidth, mHeight});
 
       /*  Polygon p = new Polygon(new float[]{
                 (1f/3f)*mWidth,(7f/8f)*mHeight,
