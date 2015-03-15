@@ -11,7 +11,9 @@ import com.ece290.mobileimagingasteroids.gameobject.Shot;
 import com.ece290.mobileimagingasteroids.gameobject.GameObject;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,7 +24,7 @@ public class GameWorld {
     private Ship mShip;
 
     private List<Asteroid> asteroids;
-    private List<Shot> shots;
+    private List<Shot> shots = new ArrayList<Shot>();
 
     private int score;
 
@@ -32,7 +34,7 @@ public class GameWorld {
     private float ASTEROID_ARRIVAL_RATE = 0.2f;
     private float ASTEROID_MAX = 20;
 
-    private int deadTime = 1000;
+    private int deadTime = 300;
 
     private boolean isGameOver;
     private boolean hasCrashed = false;
@@ -45,9 +47,6 @@ public class GameWorld {
         this.mHeight = height;
         asteroids = new ArrayList<Asteroid>();
         asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
-
-        shots = new ArrayList<Shot>();
-        shots.add(new Shot(50, 50, 20, 20));
 
         asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
 
@@ -79,6 +78,7 @@ public class GameWorld {
             }
         });
     }
+
     public void update(float delta) {
         //Gdx.app.log("GameWorld", "update");
 
@@ -116,36 +116,50 @@ public class GameWorld {
             deadTime-=delta;
             if(deadTime<=0){
                 hasCrashed = false;
-                deadTime = 1000;
+                deadTime = 300;
             }
         }
 
         List<Asteroid> astrCopy = asteroids;
-        for (Shot s : shots) {
-            for (int i = 0; i < astrCopy.size(); i++) {
-                Asteroid currHit = asteroids.get(i);
+        for (int i = 0; i < shots.size(); i++) {
+            Shot currShot = shots.get(i);
+            for (int j = 0; j < astrCopy.size(); j++) {
+                Asteroid currAsteroid = asteroids.get(j);
 
-                if (Intersector.overlapConvexPolygons(s.getPolygon(), currHit.getPolygon())) {
-                    System.out.println("BULLET HIT");
+                if (Intersector.overlapConvexPolygons(currShot.getPolygon(), currAsteroid.getPolygon())) {
+                    shots.remove(currShot);
 
-                    if (currHit.getWidth() > mWidth / 12 && currHit.getHeight() > mHeight / 12) {
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
+                    if (currAsteroid.getWidth() > 60 && currAsteroid.getHeight() > 60) {
+                        asteroids.remove(j);
 
-                        asteroids.add(new Asteroid(Math.round(currHit.getWidth() / 2),
-                                Math.round(currHit.getHeight() / 2),
-                                currHit.getX(),
-                                currHit.getY(),
-                                currHit.getVelocityX() + MathUtils.random(5, 20),
-                                currHit.getVelocityY() + MathUtils.random(5, 20)));
-                        asteroids.remove(i);
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX(),
+                                currAsteroid.getVelocityY()));
+
+                        asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
+                                Math.round(currAsteroid.getHeight() / 2),
+                                currAsteroid.getX(),
+                                currAsteroid.getY(),
+                                currAsteroid.getVelocityX(),
+                                currAsteroid.getVelocityY()));
+
+                        randomizeAsteroidVelocityOnSplit(asteroids.get(asteroids.size()-1),
+                                                         asteroids.get(asteroids.size()-2));
+                    } else {
+                        asteroids.remove(j);
                     }
-                    asteroids.remove(i);
                 }
+            }
+        }
+
+        Iterator<Shot> itr = shots.iterator();
+        if (itr.hasNext()) {
+            Shot currentShot = itr.next();
+            if (!isGameObjectInScreenBounds(currentShot)){
+                shots.remove(currentShot);
             }
         }
 
@@ -160,6 +174,16 @@ public class GameWorld {
                 }
             }
         }
+    }
+
+    private void randomizeAsteroidVelocityOnSplit(Asteroid a1, Asteroid a2) {
+        a1.setVelocityX(MathUtils.random(-30, 30));
+        a1.setVelocityY(MathUtils.random(-30, 30));
+        a2.setVelocityX(MathUtils.random(-30, 30));
+        a2.setVelocityX(MathUtils.random(-30, 30));
+
+        a1.rotate(MathUtils.random(-20, 20));
+        a2.rotate(MathUtils.random(-20, 20));
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)

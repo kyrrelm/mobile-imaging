@@ -51,6 +51,8 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     private Mat                  mSpectrum;
     private Size SPECTRUM_SIZE;
     private Scalar CONTOUR_COLOR;
+    private Point centroid;
+    private int counter = 0;
 
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -101,14 +103,18 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
     }
 
     public boolean onTouch(View v, MotionEvent event) {
+        return findContour(event.getX(), event.getY());
+    }
+
+    private boolean findContour(float xCord, float yCord){
         int cols = mRgba.cols();
         int rows = mRgba.rows();
 
         int xOffset = (mOpenCvCameraView.getWidth() - cols) / 2;
         int yOffset = (mOpenCvCameraView.getHeight() - rows) / 2;
 
-        int x = (int)event.getX() - xOffset;
-        int y = (int)event.getY() - yOffset;
+        int x = (int)xCord - xOffset;
+        int y = (int)yCord - yOffset;
 
         Log.i(TAG, "Touch image coordinates: (" + x + ", " + y + ")");
 
@@ -148,11 +154,12 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
         touchedRegionHsv.release();
 
         return false; // don't need subsequent touch events
-
-
     }
-
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        if (centroid != null && counter > 10){
+            //findContour((float)centroid.x, (float)centroid.y);
+            counter = 0;
+        }
         mRgba = inputFrame.rgba();
         if (mIsColorSelected) {
             mDetector.process(mRgba);
@@ -214,7 +221,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
-                Point centroid = centerOfMass(convexHullMatOfPoints);
+                centroid = centerOfMass(convexHullMatOfPoints);
 
                 ArrayList<Point> fingerTips = new ArrayList<>();
                 //TODO: Draw for debug
@@ -238,7 +245,7 @@ public class AndroidFragmentLauncher extends FragmentActivity implements Android
 
             GameFragment gameFragment = (GameFragment)getSupportFragmentManager().findFragmentById(R.id.game_fragment);
             gameFragment.onRotationUpdate(37);
-
+            counter++;
         }
 
         return mRgba;
