@@ -10,14 +10,22 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by Kyrre on 06.03.2015.
  */
 public class GestureDetector {
+    private static LinkedList<LinkedList<Point>> fingerCache;
     static int count = 0;
+    private static boolean firstTime = true;
+
     public static void detect(ArrayList<Point> fingerTips, Point centroid, Mat mRgba) {
+        if (firstTime){
+            init();
+            firstTime = false;
+        }
         for (Point p: fingerTips){
             Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
             Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
@@ -30,9 +38,30 @@ public class GestureDetector {
                 Point indexFinger = findIndexFinger(middleFinger, thumb, fingerTips);
                 Point ringFinger = findRingFinger(middleFinger,thumb, indexFinger, fingerTips);
                 Point littleFinger = findLittleFinger(middleFinger,thumb, indexFinger, ringFinger, fingerTips);
+                cacheFingers(middleFinger,thumb,indexFinger,ringFinger,littleFinger);
             }
         }
         count++;
+    }
+
+    private static void init() {
+        fingerCache = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            fingerCache.add(new LinkedList<Point>());
+        }
+    }
+
+    private static void cacheFingers(Point middleFinger, Point thumb, Point indexFinger, Point ringFinger, Point littleFinger) {
+        fingerCache.get(0).add(middleFinger);
+        fingerCache.get(1).add(thumb);
+        fingerCache.get(2).add(indexFinger);
+        fingerCache.get(3).add(ringFinger);
+        fingerCache.get(4).add(littleFinger);
+        for (LinkedList<Point> l: fingerCache){
+            if (l.size() > 10){
+                l.poll();
+            }
+        }
     }
 
     private static Point findLittleFinger(Point middleFinger, Point thumb, Point indexFinger, Point ringFinger, ArrayList<Point> fingerTips) {
