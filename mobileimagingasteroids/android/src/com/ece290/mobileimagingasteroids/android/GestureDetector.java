@@ -30,16 +30,20 @@ public class GestureDetector {
             Core.circle(mRgba, p, 10, new Scalar(150, 50, 255));
             Core.line(mRgba, p, centroid, new Scalar(150, 50, 50),10);
         }
-        //Log.d("Angle","count: "+count);
-        Point middleFinger = findMiddleFinger(fingerTips,centroid);
-        if (middleFinger != null){
-            Point thumb = findThumb(centroid, middleFinger, fingerTips);
-            if (thumb != null){
-                Point indexFinger = findIndexFinger(middleFinger, thumb, fingerTips);
-                Point ringFinger = findRingFinger(middleFinger,thumb, indexFinger, fingerTips);
-                Point littleFinger = findLittleFinger(middleFinger,thumb, indexFinger, ringFinger, fingerTips);
-                cacheFingers(middleFinger,thumb,indexFinger,ringFinger,littleFinger);
+
+        if (fingerTips.size() == 5){
+            Point middleFinger = findMiddleFinger(fingerTips,centroid);
+            if (middleFinger != null){
+                Point thumb = findThumb(centroid, middleFinger, fingerTips);
+                if (thumb != null){
+                    Point indexFinger = findIndexFinger(middleFinger, thumb, fingerTips);
+                    Point ringFinger = findRingFinger(middleFinger,thumb, indexFinger, fingerTips);
+                    Point littleFinger = findLittleFinger(middleFinger,thumb, indexFinger, ringFinger, fingerTips);
+                    cacheFingers(middleFinger,thumb,indexFinger,ringFinger,littleFinger);
+                }
             }
+        }else {
+            //TODO: cache stuff goes here
         }
         count++;
     }
