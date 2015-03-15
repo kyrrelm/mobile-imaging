@@ -129,10 +129,11 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
         Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
 
         // Calculate average color of touched region
-        mBlobColorHsv = Core.sumElems(touchedRegionHsv);
+        mBlobColorHsv = Core.mean(touchedRegionHsv);
+        /*mBlobColorHsv = Core.sumElems(touchedRegionHsv);
         int pointCount = touchedRect.width*touchedRect.height;
         for (int i = 0; i < mBlobColorHsv.val.length; i++)
-            mBlobColorHsv.val[i] /= pointCount;
+            mBlobColorHsv.val[i] /= pointCount;*/
 
         mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
@@ -204,7 +205,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                     MatOfPoint2f m2 = new MatOfPoint2f();
                     m2.fromList(enclosingCircle);
                     Imgproc.minEnclosingCircle(m2, c1, r);
-                    //Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
+                    Core.circle(mRgba, c1, (int) r[0], new Scalar(255, 0, 0));
                 }
                 catch (Exception e)
                 {
@@ -291,10 +292,6 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 //lefty = int((-x*vy/vx) + y)
                 //righty = int(((cols-x)*vy/vx)+y)
                 //img = cv2.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
-
-
-                //Core.line();
-
             }
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
