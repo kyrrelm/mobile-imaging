@@ -110,8 +110,6 @@ public class GameWorld {
             s.update(delta);
         }
 
-        //TODO also will need collision for shooting
-
         if(hasCrashed){
             deadTime-=delta;
             if(deadTime<=0){
@@ -134,15 +132,15 @@ public class GameWorld {
 
                         asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
                                 Math.round(currAsteroid.getHeight() / 2),
-                                currAsteroid.getX(),
-                                currAsteroid.getY(),
+                                currAsteroid.getX() + currAsteroid.getWidth() / 4,
+                                currAsteroid.getY() + currAsteroid.getHeight() / 4,
                                 currAsteroid.getVelocityX(),
                                 currAsteroid.getVelocityY()));
 
                         asteroids.add(new Asteroid(Math.round(currAsteroid.getWidth() / 2),
                                 Math.round(currAsteroid.getHeight() / 2),
-                                currAsteroid.getX(),
-                                currAsteroid.getY(),
+                                currAsteroid.getX() + currAsteroid.getWidth() / 4,
+                                currAsteroid.getY() + currAsteroid.getHeight() / 4,
                                 currAsteroid.getVelocityX(),
                                 currAsteroid.getVelocityY()));
 
@@ -180,7 +178,7 @@ public class GameWorld {
         a1.setVelocityX(MathUtils.random(-30, 30));
         a1.setVelocityY(MathUtils.random(-30, 30));
         a2.setVelocityX(MathUtils.random(-30, 30));
-        a2.setVelocityX(MathUtils.random(-30, 30));
+        a2.setVelocityY(MathUtils.random(-30, 30));
 
         a1.rotate(MathUtils.random(-20, 20));
         a2.rotate(MathUtils.random(-20, 20));
