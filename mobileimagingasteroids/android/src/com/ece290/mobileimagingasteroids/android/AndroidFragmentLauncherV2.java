@@ -27,6 +27,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -114,11 +115,13 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
 
         Rect touchedRect = new Rect();
 
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
+        int rectSize = 4;
 
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+        touchedRect.x = (x>rectSize) ? x-rectSize : 0;
+        touchedRect.y = (y>rectSize) ? y-rectSize : 0;
+
+        touchedRect.width = (x+rectSize < cols) ? x + rectSize - touchedRect.x : cols - touchedRect.x;
+        touchedRect.height = (y+rectSize < rows) ? y + rectSize - touchedRect.y : rows - touchedRect.y;
 
         Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
@@ -126,10 +129,11 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
         Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
 
         // Calculate average color of touched region
-        mBlobColorHsv = Core.sumElems(touchedRegionHsv);
+        mBlobColorHsv = Core.mean(touchedRegionHsv);
+        /*mBlobColorHsv = Core.sumElems(touchedRegionHsv);
         int pointCount = touchedRect.width*touchedRect.height;
         for (int i = 0; i < mBlobColorHsv.val.length; i++)
-            mBlobColorHsv.val[i] /= pointCount;
+            mBlobColorHsv.val[i] /= pointCount;*/
 
         mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
 
@@ -156,7 +160,6 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
 
-
             if (!contours.isEmpty()) {
                 MatOfPoint handContour = findBiggestContour(contours);
                 Point[] contourPts = handContour.toArray();
@@ -177,7 +180,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 {
                     //if(convexityDefectsList.get(i+3) > 10000) {
                     double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
-                    System.out.println("area:" + area);
+                    //System.out.println("area:" + area);
 
                     if(area > 1200 && convexityDefectsList.get(i+3) > 500) {
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
@@ -209,6 +212,28 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
 
                 }*/
 
+
+                 MatOfPoint2f contourMat2f = new MatOfPoint2f();
+                 contourMat2f.fromArray(contourPts);
+                 //contourMat2f.fromList(convexHullMatOfPoints.toList());
+                try {
+                    RotatedRect rotatedRect = Imgproc.fitEllipse(contourMat2f);
+                    Core.ellipse(mRgba,rotatedRect, new Scalar(255,127,58));
+                }
+                catch (Exception e)
+                {
+
+                }
+
+                RotatedRect r2 = Imgproc.minAreaRect(contourMat2f);
+
+                Point[] r2Points = new Point[4];
+                r2.points(r2Points);
+                List<MatOfPoint> r2List = new ArrayList<MatOfPoint>();
+                r2List.add(new MatOfPoint(r2Points));
+                Imgproc.drawContours(mRgba, r2List, 0, new Scalar(224, 255, 127));
+
+                //draw fingers
                 for(int i=0; i<filteredConvexityDefectsList.size();i+=4)
                 {
                     Point end = contourPts[filteredConvexityDefectsList.get(i+1)];
@@ -233,6 +258,9 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 hax.add(convexHullMatOfPoints);
                 Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
 
+                //List<MatOfPoint> hax2 = new ArrayList<MatOfPoint>();
+                //hax2.add(handContour);
+                //Imgproc.drawContours(mRgba, hax2, 0, CONTOUR_COLOR);
                 Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
                 // Get bounding rect of contour
@@ -240,8 +268,30 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
                 // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
                 Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 255), 3);
 
+                //get fitline
+                /*Mat fitLine = new Mat();
+                //Imgproc.fitLine(handContour,fitLine, Imgproc.CV_DIST_L1,0,.01,.01);
+                Imgproc.fitLine(convexHullMatOfPoints,fitLine, Imgproc.CV_DIST_L2,0,.01,.01);
+                double vx = fitLine.get(0,0)[0];
+                double vy = fitLine.get(1,0)[0];
+                double x0 = fitLine.get(2,0)[0];
+                double y0 = fitLine.get(3,0)[0];
+                if(vx<0)
+                {
+                    vx*=-1.0;
+                    vy*=-1.0;
+                }
+                Point fitPoint = new Point(x0+vx*400,y0+vy*400);
 
-
+                int lefty = (int)(-x0*(vy/vx)+y0);
+                int righty = (int)((mRgba.rows()-x0)*vy/vx+y0);
+                //Core.line(mRgba, new Point(mRgba.cols()-1, righty), new Point(0,lefty), new Scalar(50, 50, 50), 10);
+                Core.line(mRgba, fitPoint, new Point(x0,y0), new Scalar(50, 50, 50), 10);
+                //Core.circle(mRgba, new Point(x0,y0), 10, new Scalar(128, 185, 72));
+*/
+                //lefty = int((-x*vy/vx) + y)
+                //righty = int(((cols-x)*vy/vx)+y)
+                //img = cv2.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
             }
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
