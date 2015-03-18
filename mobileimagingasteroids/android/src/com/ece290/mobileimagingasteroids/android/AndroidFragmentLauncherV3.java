@@ -52,8 +52,12 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
     private Size SPECTRUM_SIZE;
     private Scalar CONTOUR_COLOR;
 
+    GameFragment gameFragment;
+
     private double mAngle = 0;
     private double mAngleAlpha = .1;
+    private double mSpeed = 0;
+    private double mSpeedAlpha = .1;
 
     private double mapAngle(double angle)
     {
@@ -176,6 +180,10 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
 
+            if(gameFragment==null) {
+                gameFragment = (GameFragment) getSupportFragmentManager().findFragmentById(R.id.game_fragment);
+            }
+
             if (!contours.isEmpty()) {
                 MatOfPoint handContour = findBiggestContour(contours);
                 Point[] contourPts = handContour.toArray();
@@ -211,21 +219,22 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
 
                 List<Integer> filteredConvexityDefectsList = new ArrayList<>();
 
-                List<Point> enclosingCircle = new ArrayList<Point>();
+                //List<Point> enclosingCircle = new ArrayList<Point>();
+                int fingerDefects=0;
+                boolean thumbDefects=false;
                 for(int i=0; i<convexityDefectsList.size(); i+=4)
                 {
                     //if(convexityDefectsList.get(i+3) > 10000) {
                     double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
                     //System.out.println("area:" + area);
 
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                    /*Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
                     Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));*/
 
                     area = area/rect.area();
 
-                    int fingerDefects=0;
-                    boolean thumbDefects=false;
+
                     if((area > .075) ) {
                         thumbDefects = true;
                         Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
@@ -242,7 +251,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(200,20,20));
 
                     }
-                    else if (area > .025)
+                    else if (area > .03)
                     {
                         fingerDefects+=1;
                         MatOfPoint triangle = new MatOfPoint();
@@ -254,49 +263,54 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(20,200,20));
                     }
 
-                    boolean open = false;
-                    double angle = rotatedRect.angle;
-                    if(fingerDefects > 3)
-                    {
-                        open = true;
-                        //angle += 2%180;
-                        if(thumbDefects = false);
-                        {
-                         //   angle +=8%180;
-                        }
-                    }
-                    if(open == false && thumbDefects==true)
-                    {
-                       // angle -= 15%180;
-                    }
-                    mAngle = ExponentialMovingAverage.calc(mapAngle(angle),mAngle,.1);
-                    GameFragment gameFragment = (GameFragment)getSupportFragmentManager().findFragmentById(R.id.game_fragment);
-                    gameFragment.onRotationUpdate(mAngle);
-
-                    System.out.println("rotatedRect Angle:"+rotatedRect.angle); // middle:0, right:20, left:160
-                    System.out.println("Angle:"+angle); // middle:0, right:20, left:160
-                    System.out.println("mapped Angle:"+mapAngle(angle)); //-1 left
-                    System.out.println("weighted:"+mAngle);
                 }
 
-                RotatedRect r2 = Imgproc.minAreaRect(contourMat2f);
+                boolean open = false;
+                double angle = rotatedRect.angle;
+                System.out.println("fingerDefects:"+fingerDefects);
+                if(fingerDefects > 3)
+                {
+                    open = true;
+                    //angle += 2%180;
+                    if(thumbDefects = false);
+                    {
+                        //   angle +=8%180;
+                    }
+                }
+                if(open == false && thumbDefects==true)
+                {
+                    // angle -= 15%180;
+                }
+                mAngle = ExponentialMovingAverage.calc(mapAngle(angle),mAngle,mAngleAlpha);
+                mSpeed = ExponentialMovingAverage.calc(mSpeed,open ? 0:1,mSpeedAlpha);
+
+                gameFragment.onRotationUpdate(mAngle, mSpeed, thumbDefects);
+                 /*System.out.println("rotatedRect Angle:"+rotatedRect.angle); // middle:0, right:20, left:160
+                   System.out.println("Angle:"+angle); // middle:0, right:20, left:160
+                   System.out.println("mapped Angle:"+mapAngle(angle)); //-1 left
+                   System.out.println("weighted:"+mAngle);*/
+
+                /*RotatedRect r2 = Imgproc.minAreaRect(contourMat2f);
 
                 Point[] r2Points = new Point[4];
                 r2.points(r2Points);
                 List<MatOfPoint> r2List = new ArrayList<MatOfPoint>();
                 r2List.add(new MatOfPoint(r2Points));
-                Imgproc.drawContours(mRgba, r2List, 0, new Scalar(224, 255, 127));
+                Imgproc.drawContours(mRgba, r2List, 0, new Scalar(224, 255, 127));*/
 
-                Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
+                /*Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
                 List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
                 hax.add(convexHullMatOfPoints);
-                Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
+                Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));*/
 
                 //List<MatOfPoint> hax2 = new ArrayList<MatOfPoint>();
                 //hax2.add(handContour);
                 //Imgproc.drawContours(mRgba, hax2, 0, CONTOUR_COLOR);
                 Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
+            }
+            else {
+                gameFragment.onRotationUpdate(0, 0, false);
             }
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);

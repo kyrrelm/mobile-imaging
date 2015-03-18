@@ -10,11 +10,23 @@ public class MobileImagingAsteroids extends Game {
 	SpriteBatch batch;
 	Texture img;
     Texture img2;
+    private GameScreen gs;
+    private GameWorld gw;
+
+    public GameWorld getGameWorld()
+    {
+        if(gw==null)
+        {
+            gw = gs.getWorld();
+        }
+        return gw;
+    }
 
 	@Override
 	public void create () {
         AssetLoader.load();
-        setScreen(new GameScreen());//new EndGameScreen(new GameWorld(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())));
+        gs = new GameScreen();
+        setScreen(gs);//new EndGameScreen(new GameWorld(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())));
 
 		/*batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");

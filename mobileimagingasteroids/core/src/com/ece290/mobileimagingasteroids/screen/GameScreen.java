@@ -18,6 +18,11 @@ public class GameScreen implements Screen {
     private GameWorld world;
     private GameRenderer renderer;
 
+    public GameWorld getWorld()
+    {
+        return world;
+    }
+
     public GameScreen()
     {
         Gdx.app.log("GameScreen", "Attached");

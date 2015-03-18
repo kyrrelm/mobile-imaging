@@ -22,7 +22,7 @@ import java.util.List;
 public class GameWorld {
 
     private final float ASTEROID_ARRIVAL_RATE = 0.2f;
-    private final float ASTEROID_MAX = 20;
+    private final float ASTEROID_MAX = 10;
 
     private int mWidth, mHeight;
 
@@ -33,6 +33,8 @@ public class GameWorld {
     private int score;
     private float runTime;
     private float asteroidSpawnTime;
+
+    private double shipRotationUpdate;
 
     private int deadTime = 300; //TODO
 
@@ -53,7 +55,21 @@ public class GameWorld {
     public enum GameState {
         READY, RUNNING, GAMEOVER
     }
-
+    public void setShipRotationUpdate(double rotation)
+    {
+        mShip.setRotationUpdate((float)(rotation*75));
+    }
+    public void setShoot(boolean shoot)
+    {
+        //Shot shot = mShip.shoot();
+        //if(shot != null)
+         //   shots.add(shot);
+    }
+    public void setShipSpeed(double speed)
+    {
+        System.out.println("SPEED:"+speed);
+        mShip.setVelocityY((float)(-80*speed));
+    }
     public GameWorld(int width, int height)
     {
         this.mWidth = width;
@@ -97,7 +113,7 @@ public class GameWorld {
         mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
 
         //TODO remove this.
-        mShip.setVelocityY(-30);
+        //mShip.setVelocityY(-30);
         asteroids.add(new Asteroid(200,200,50,50,40,40));
 
         currentState = GameState.READY;
@@ -129,7 +145,7 @@ public class GameWorld {
         }
 
         mShip.update(delta);
-        mShip.setRotationUpdate(5);
+        //mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
 
         for(Asteroid a : asteroids) {

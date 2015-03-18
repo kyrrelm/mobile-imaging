@@ -304,7 +304,7 @@ public class AndroidFragmentLauncherV2 extends FragmentActivity implements Andro
             mSpectrum.copyTo(spectrumLabel);
 
             GameFragment gameFragment = (GameFragment)getSupportFragmentManager().findFragmentById(R.id.game_fragment);
-            gameFragment.onRotationUpdate(37);
+            //gameFragment.onRotationUpdate(37);
 
         }
 
