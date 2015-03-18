@@ -28,9 +28,9 @@ public class GameFragment extends AndroidFragmentApplication
         return initializeForView(new MobileImagingAsteroids(), config);
     }
 
-    public void onRotationUpdate(int rotationUpdate)
+    public void onRotationUpdate(double rotationUpdate)
     {
-        Log.i("GameFragment", "rotationUpdate:"+rotationUpdate);
+        //Log.i("GameFragment", "rotationUpdate:"+rotationUpdate);
     }
 
 }
