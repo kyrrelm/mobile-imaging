@@ -20,40 +20,49 @@ import java.util.List;
  * Created by ethan_000 on 2/15/2015.
  */
 public class GameWorld {
-    private int mWidth, mHeight;
-    private Ship mShip;
 
+    private final float ASTEROID_ARRIVAL_RATE = 0.2f;
+    private final float ASTEROID_MAX = 20;
+
+    private int mWidth, mHeight;
+
+    private Ship mShip;
     private List<Asteroid> asteroids;
-    private List<Shot> shots = new ArrayList<Shot>();
+    private List<Shot> shots;
 
     private int score;
-
     private float runTime;
     private float asteroidSpawnTime;
 
-    private float ASTEROID_ARRIVAL_RATE = 0.2f;
-    private float ASTEROID_MAX = 20;
+    private int deadTime = 300; //TODO
 
-    private int deadTime = 300;
+    private boolean hasCrashed = false; //TODO used?
 
-    private boolean isGameOver;
-    private boolean hasCrashed = false;
+    private Sound crashSound = Gdx.audio.newSound(Gdx.files.internal("crash_sound.mp3")); //TODO should reference the assetLoader instead..
 
-    private Sound crashSound = Gdx.audio.newSound(Gdx.files.internal("crash_sound.mp3"));
+    private GameState currentState;
+
+    /**
+     * Enum that describes the state of the gameworld.
+     * <p>
+     *     READY:   Game is initialized and ready to start.
+     *     RUNNING: Game is currently running.
+     *     GAMEOVER:Game finished.
+     * </p>
+     */
+    public enum GameState {
+        READY, RUNNING, GAMEOVER
+    }
 
     public GameWorld(int width, int height)
     {
         this.mWidth = width;
         this.mHeight = height;
-        asteroids = new ArrayList<Asteroid>();
-        asteroids.add(new Asteroid(200, 200, 50, 50, 40, 40));
 
         asteroidSpawnTime = (float) NegativeExponentialCalculator.calculate(ASTEROID_ARRIVAL_RATE);
 
-        //asteroids.add(new Asteroid(200,200,50,50,40,40));
-
-        mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
-        mShip.setVelocityY(-30);
+        setGame();
+        start();
 
         TouchGestureListener.addListenser(new ControlsListener() {
             @Override
@@ -79,13 +88,35 @@ public class GameWorld {
         });
     }
 
+    /**
+     * Initializes the game environment
+     */
+    private void setGame() {
+        asteroids = new ArrayList<Asteroid>();
+        shots = new ArrayList<Shot>();
+        mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
+
+        //TODO remove this.
+        mShip.setVelocityY(-30);
+        asteroids.add(new Asteroid(200,200,50,50,40,40));
+
+        currentState = GameState.READY;
+    }
+
     public void update(float delta) {
-        //Gdx.app.log("GameWorld", "update");
 
-        if(mShip.isDead()) {
-            return;
+        switch (currentState) {
+            case READY:
+                updateReady(delta);
+                break;
+            case RUNNING:
+                updateRunning(delta);
+                break;
         }
+    }
 
+    public void updateRunning(float delta) {
+        //Gdx.app.log("GameWorld", "update");
 
         runTime += delta;
 
@@ -100,8 +131,8 @@ public class GameWorld {
         mShip.update(delta);
         mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
-        for(Asteroid a : asteroids)
-        {
+
+        for(Asteroid a : asteroids) {
             resetGameObjectInScreenBounds(a);
             a.setRotationUpdate(10);
             a.update(delta);
@@ -173,6 +204,15 @@ public class GameWorld {
                 }
             }
         }
+
+        //Check if game is lost
+        if(mShip.isDead())
+            currentState = GameState.GAMEOVER;
+
+    }
+
+    public void updateReady(float delta) {
+        //TODO
     }
 
     private void randomizeAsteroidVelocityOnSplit(Asteroid a1, Asteroid a2) {
@@ -210,6 +250,27 @@ public class GameWorld {
         return true;
     }
 
+    public boolean isReady() {      return currentState == GameState.READY;}
+    public boolean isGameOver() {   return currentState == GameState.GAMEOVER;}
+
+    /**
+     * Start the game
+     */
+    public void start(){
+        currentState = GameState.RUNNING;
+    }
+
+    /**
+     * Put the game in ready-state.
+     */
+    public void restart() {
+
+        score = 0; runTime = 0;
+        setGame();
+        start();
+    }
+
+    //Getters
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
     public List<Shot> getShots() {return shots;}

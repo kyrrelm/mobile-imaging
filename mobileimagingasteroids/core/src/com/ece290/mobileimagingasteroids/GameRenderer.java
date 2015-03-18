@@ -55,6 +55,11 @@ public class GameRenderer {
         //Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
 
+        if(world.isGameOver()) {
+            //TODO draw "GAME OVER" on screen, and add restart button.
+            return;
+        }
+
         for (Asteroid a : world.getAsteroids())
         {
             mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
@@ -89,6 +94,5 @@ public class GameRenderer {
             shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
 
         shapeRenderer.end();
-
     }
 }
