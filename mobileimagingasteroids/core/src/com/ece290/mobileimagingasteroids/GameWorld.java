@@ -217,6 +217,7 @@ public class GameWorld {
                     System.out.println("SHIP HIT");
                     crashSound.play();
                     hasCrashed = true;
+                    mShip.crashed();
                 }
             }
         }
@@ -280,7 +281,6 @@ public class GameWorld {
      * Put the game in ready-state.
      */
     public void restart() {
-
         score = 0; runTime = 0;
         setGame();
         start();
