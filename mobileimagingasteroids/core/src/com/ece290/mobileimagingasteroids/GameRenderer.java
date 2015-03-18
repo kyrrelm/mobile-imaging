@@ -54,10 +54,18 @@ public class GameRenderer {
         mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth()/2,ship.getHeight()/2,ship.getWidth(),ship.getHeight(),1,1,ship.getRotation());
         //Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
+        float middleX = Gdx.graphics.getWidth()/2;
+        float middleY = Gdx.graphics.getHeight()/2;
 
         if(world.isGameOver()) {
-            //TODO draw "GAME OVER" on screen, and add restart button.
-            return;
+//            AssetLoader.font.draw(mSpriteBatch, "GAME OVER",(Gdx.graphics.getWidth()/2)-50, 200);
+            AssetLoader.restartButton.draw(mSpriteBatch, 1);
+
+        } else if(world.isReady()) {
+//            AssetLoader.font.draw(mSpriteBatch, "ASTEROIDS",(Gdx.graphics.getWidth()/2)-50, 200);
+            AssetLoader.startButton.draw(mSpriteBatch, 1);
+            //TODO
+
         }
 
         for (Asteroid a : world.getAsteroids())

@@ -20,7 +20,7 @@ public class Ship extends GameObject {
     private float shotCooldown = 0;
 
     //Number of lives left
-    private int lives = 4;
+    private int lives = 1;
     private boolean isDead = false;
 
     private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("shot_sound.mp3"));

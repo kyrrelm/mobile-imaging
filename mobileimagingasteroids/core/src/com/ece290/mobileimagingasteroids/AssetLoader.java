@@ -1,8 +1,13 @@
 package com.ece290.mobileimagingasteroids;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /**
  * Created by ethan_000 on 2/17/2015.
@@ -16,6 +21,10 @@ public class AssetLoader{
     public static Sprite asteroidSprite;
     public static Texture shotTexture;
     public static Sprite shotSprite;
+
+    public static BitmapFont font;
+    public static TextButton restartButton;
+    public static TextButton startButton;
 
     public static void load()
     {
@@ -35,6 +44,19 @@ public class AssetLoader{
         shotSprite = new Sprite(shotTexture);
         shotSprite.flip(false, true);
 
+        Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+        restartButton = new TextButton("RESTART", skin);
+        startButton = new TextButton("START", skin);
+
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+
+/*
+        Skin skin = new Skin(Gdx.files.internal("skins/buttonSkin.json"), Gdx.files.internal("buttonTexture.png"));
+
+        restartButton = new TextButton("Restart Game", skin);
+        startButton = new TextButton("Start Game", skin);
+*/
     }
 
     public static void dispose() {
@@ -42,5 +64,6 @@ public class AssetLoader{
         bgTexture.dispose();
         shipTexture.dispose();
         asteroidTexture.dispose();
+        shotTexture.dispose();
     }
 }
