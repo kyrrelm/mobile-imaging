@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -62,6 +64,12 @@ public class GameRenderer {
             mSpriteBatch.draw(AssetLoader.shotSprite, s.getX(), s.getY(), s.getWidth()/2, s.getHeight()/2, s.getWidth(), s.getHeight(),1,1,s.getRotation());
         }
 
+
+        BitmapFont scoreDisplay = new BitmapFont();
+        scoreDisplay.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        scoreDisplay.setScale(2);
+        scoreDisplay.draw(mSpriteBatch, "Score: "+world.getScore(), 25, 100);
+
         mSpriteBatch.end();
 
 
@@ -77,10 +85,8 @@ public class GameRenderer {
         for(Asteroid a : world.getAsteroids())
             shapeRenderer.polygon(a.getPolygon().getTransformedVertices());
 
-
         for(Shot s: world.getShots())
             shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
-
 
         shapeRenderer.end();
 

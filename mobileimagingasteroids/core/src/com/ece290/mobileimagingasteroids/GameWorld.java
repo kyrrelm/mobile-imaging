@@ -85,6 +85,7 @@ public class GameWorld {
             return;
         }
 
+
         runTime += delta;
 
         if(runTime > asteroidSpawnTime)
@@ -214,4 +215,8 @@ public class GameWorld {
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
     public List<Shot> getShots() {return shots;}
+    public String getScore(){
+        int fullScore = (int)(runTime/1000) + score;
+        return fullScore+"";
+    }
 }

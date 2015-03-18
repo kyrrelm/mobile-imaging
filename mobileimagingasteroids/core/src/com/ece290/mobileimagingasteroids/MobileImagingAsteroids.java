@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.Game;
+import com.ece290.mobileimagingasteroids.screen.EndGameScreen;
 import com.ece290.mobileimagingasteroids.screen.GameScreen;
 
 public class MobileImagingAsteroids extends Game {
@@ -17,7 +18,7 @@ public class MobileImagingAsteroids extends Game {
 	@Override
 	public void create () {
         AssetLoader.load();
-        setScreen(new GameScreen());
+        setScreen(new GameScreen());//new EndGameScreen(new GameWorld(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())));
 
 		/*batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");

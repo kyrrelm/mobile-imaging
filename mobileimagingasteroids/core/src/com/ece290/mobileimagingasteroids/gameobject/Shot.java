@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Polygon;
 public class Shot extends GameObject{
 
     public static final int SIZE = 15;
-    
+
     public Shot(float positionX, float positionY, float velocityX, float velocityY){
         super(SIZE, SIZE, positionX, positionY, velocityX, velocityY);
     }
