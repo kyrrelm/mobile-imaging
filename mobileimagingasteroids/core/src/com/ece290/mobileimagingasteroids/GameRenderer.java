@@ -73,8 +73,6 @@ public class GameRenderer {
 
         BitmapFont scoreDisplay = new BitmapFont(Gdx.files.internal("skins/default.fnt"), true);
         scoreDisplay.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        scoreDisplay.setScale(2);
-        scoreDisplay.draw(mSpriteBatch, "Lives left: "+world.getLives()+"    -    "+"Score: "+world.getScore(), 25, 100);
 
         if (world.isGameOver()) {
             scoreDisplay.setScale(5, 5);
@@ -83,7 +81,8 @@ public class GameRenderer {
                                        "\n\n Touch to restart", 50, 200);
         } else {
             scoreDisplay.setScale(3, 3);
-            scoreDisplay.draw(mSpriteBatch, "Score: " + world.getScore(), 100, 100);
+            scoreDisplay.drawMultiLine(mSpriteBatch, "Score: " + world.getScore() + "\n" +
+                                       "Lives left: " + ship.getLives(), 50, 100);
         }
         mSpriteBatch.end();
 
