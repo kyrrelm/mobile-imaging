@@ -45,11 +45,6 @@ public class GameRenderer {
         GestureDetector gd = new GestureDetector(new TouchGestureListener());
         Gdx.input.setInputProcessor(gd);
 
-        AssetLoader.restartButton.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                world.restart();
-            }
-        });
     }
     public void render() {
         //Gdx.app.log("GameRenderer", "render");
@@ -66,25 +61,6 @@ public class GameRenderer {
         mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth()/2,ship.getHeight()/2,ship.getWidth(),ship.getHeight(),1,1,ship.getRotation());
         //Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
-        float middleX = Gdx.graphics.getWidth()/2;
-        float middleY = Gdx.graphics.getHeight()/2;
-
-        if(world.isGameOver()) {
-//            AssetLoader.font.draw(mSpriteBatch, "GAME OVER",(Gdx.graphics.getWidth()/2)-50, 200);
-            AssetLoader.restartButton.draw(mSpriteBatch, 1);
-            world.restart();
-
-        } else if(world.isReady()) {
-//            AssetLoader.font.draw(mSpriteBatch, "ASTEROIDS",(Gdx.graphics.getWidth()/2)-50, 200);
-            AssetLoader.startButton.draw(mSpriteBatch, 1);
-            AssetLoader.startButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    world.start();
-                }
-            });
-        }
-
         for (Asteroid a : world.getAsteroids())
         {
             mSpriteBatch.draw(AssetLoader.asteroidSprite, a.getX(), a.getY(),a.getWidth()/2,a.getHeight()/2,a.getWidth(),a.getHeight(),1,1,a.getRotation());
@@ -95,11 +71,20 @@ public class GameRenderer {
         }
 
 
-        BitmapFont scoreDisplay = new BitmapFont();
+        BitmapFont scoreDisplay = new BitmapFont(Gdx.files.internal("skins/default.fnt"), true);
         scoreDisplay.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         scoreDisplay.setScale(2);
         scoreDisplay.draw(mSpriteBatch, "Lives left: "+world.getLives()+"    -    "+"Score: "+world.getScore(), 25, 100);
 
+        if (world.isGameOver()) {
+            scoreDisplay.setScale(5, 5);
+            scoreDisplay.drawMultiLine(mSpriteBatch,
+                                       "Game over!\nYour final score was:\n" + world.getScore() +
+                                       "\n\n Touch to restart", 50, 200);
+        } else {
+            scoreDisplay.setScale(3, 3);
+            scoreDisplay.draw(mSpriteBatch, "Score: " + world.getScore(), 100, 100);
+        }
         mSpriteBatch.end();
 
         //Draw Polygons

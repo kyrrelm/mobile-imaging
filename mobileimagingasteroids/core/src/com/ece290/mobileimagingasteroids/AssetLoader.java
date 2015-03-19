@@ -22,10 +22,6 @@ public class AssetLoader{
     public static Texture shotTexture;
     public static Sprite shotSprite;
 
-    public static BitmapFont font;
-    public static TextButton restartButton;
-    public static TextButton startButton;
-
     public static void load()
     {
         bgTexture = new Texture(Gdx.files.internal("bg.png"));
@@ -43,20 +39,6 @@ public class AssetLoader{
         shotTexture = new Texture(Gdx.files.internal("laser.png"));
         shotSprite = new Sprite(shotTexture);
         shotSprite.flip(false, true);
-
-        Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-        restartButton = new TextButton("RESTART", skin);
-        startButton = new TextButton("START", skin);
-
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
-
-/*
-        Skin skin = new Skin(Gdx.files.internal("skins/buttonSkin.json"), Gdx.files.internal("buttonTexture.png"));
-
-        restartButton = new TextButton("Restart Game", skin);
-        startButton = new TextButton("Start Game", skin);
-*/
     }
 
     public static void dispose() {
