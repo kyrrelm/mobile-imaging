@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class GameWorld {
 
-    private final float ASTEROID_ARRIVAL_RATE = 0.2f;
-    private final float ASTEROID_MAX = 20;
+    private final float ASTEROID_ARRIVAL_RATE = 0.05f;
+    private final float ASTEROID_MAX = 10;
 
     private int mWidth, mHeight;
 
@@ -33,6 +33,11 @@ public class GameWorld {
     private int score;
     private float runTime;
     private float asteroidSpawnTime;
+
+    private double shipRotationUpdate;
+
+
+    private boolean mShoot = false;
 
     private int deadTime = 300; //TODO
 
@@ -53,7 +58,20 @@ public class GameWorld {
     public enum GameState {
         READY, RUNNING, GAMEOVER
     }
+    public void setShipRotationUpdate(double rotation)
+    {
+        mShip.setRotationUpdate((float)(rotation*75));
+    }
+    public void setShoot(boolean shoot)
+    {
+        System.out.println("shoot:"+shoot);
+        mShoot = shoot;
 
+    }
+    public void setShipSpeed(double speed)
+    {
+        mShip.setVelocityY((float)(-80*speed));
+    }
     public GameWorld(int width, int height)
     {
         this.mWidth = width;
@@ -97,8 +115,8 @@ public class GameWorld {
         mShip = new Ship(mWidth/10,mHeight/10, mWidth/2, mHeight/2);
 
         //TODO remove this.
-        mShip.setVelocityY(-30);
-        asteroids.add(new Asteroid(200,200,50,50,40,40));
+        //mShip.setVelocityY(-30);
+        asteroids.add(new Asteroid(200,200,0,50,-40,40));
 
         currentState = GameState.READY;
     }
@@ -129,13 +147,21 @@ public class GameWorld {
         }
 
         mShip.update(delta);
-        mShip.setRotationUpdate(5);
+        //mShip.setRotationUpdate(5);
         resetGameObjectInScreenBounds(mShip);
 
         for(Asteroid a : asteroids) {
             resetGameObjectInScreenBounds(a);
-            a.setRotationUpdate(10);
+            //a.setRotationUpdate(10);
             a.update(delta);
+        }
+
+        if(mShoot)
+        {
+            Shot shot = mShip.shoot();
+            if(shot != null && shots.size()<10)
+               shots.add(shot);
+
         }
 
         for(Shot s : shots) {
@@ -199,7 +225,7 @@ public class GameWorld {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
                 if(!hasCrashed){
-                    System.out.println("SHIP HIT");
+                    //System.out.println("SHIP HIT");
                     crashSound.play();
                     hasCrashed = true;
                     mShip.crashed();
@@ -223,8 +249,8 @@ public class GameWorld {
         a2.setVelocityX(MathUtils.random(-30, 30));
         a2.setVelocityY(MathUtils.random(-30, 30));
 
-        a1.rotate(MathUtils.random(-20, 20));
-        a2.rotate(MathUtils.random(-20, 20));
+        //a1.rotate(MathUtils.random(-20, 20));
+        //a2.rotate(MathUtils.random(-20, 20));
     }
 
     private void resetGameObjectInScreenBounds(GameObject o)

@@ -51,7 +51,8 @@ public abstract class GameObject {
     {
         mVelocity.add(mAcceleration.cpy().scl(delta));
         mPosition.add(mVelocity.cpy().scl(delta));
-        mRotation.add(mRotationUpdate.cpy().scl(delta));
+        //mRotation.add(mRotationUpdate.cpy().scl(delta));
+        mRotation = mRotationUpdate.cpy().scl(delta);
     }
 
     protected abstract Polygon getPolygonInternal();
