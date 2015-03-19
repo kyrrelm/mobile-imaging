@@ -55,7 +55,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
     GameFragment gameFragment;
 
     private double mAngle = 0;
-    private double mAngleAlpha = .1;
+    private double mAngleAlpha = .3;
     private double mSpeed = 0;
     private double mSpeedAlpha = .5;
 
@@ -207,14 +207,15 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 RotatedRect rotatedRect = null;
                 try {
                     rotatedRect = Imgproc.fitEllipse(contourMat2f);
-                    Core.ellipse(mRgba,rotatedRect, new Scalar(255,127,58));
                 }
                 catch (Exception e){
                     return mRgba;
                 }
-
+                Core.ellipse(mRgba,rotatedRect, new Scalar(255,127,58),3);
                 Rect rect = Imgproc.boundingRect(handContour);
-                Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 255), 3);
+                Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 254), 3);
+
+
                 //Core.fillPoly(mRgba,contours, new Scalar(20,200,20));
 
                 List<Integer> filteredConvexityDefectsList = new ArrayList<>();
@@ -251,7 +252,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(200,20,20));
 
                     }
-                    else if (area > .025)
+                    else if (area > .02)
                     {
                         fingerDefects+=1;
                         MatOfPoint triangle = new MatOfPoint();
@@ -267,7 +268,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
 
                 boolean open = false;
                 double angle = rotatedRect.angle;
-                if(fingerDefects > 3)
+                if(fingerDefects > 2)
                 {
                     open = true;
                     //angle += 2%180;
@@ -297,14 +298,11 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 r2List.add(new MatOfPoint(r2Points));
                 Imgproc.drawContours(mRgba, r2List, 0, new Scalar(224, 255, 127));*/
 
-                /*Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
+                Core.circle(mRgba, centroid, 10, new Scalar(0, 0, 255));
                 List<MatOfPoint> hax = new ArrayList<MatOfPoint>();
                 hax.add(convexHullMatOfPoints);
-                Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));*/
+                Imgproc.drawContours(mRgba, hax, 0, new Scalar(0, 255, 0));
 
-                //List<MatOfPoint> hax2 = new ArrayList<MatOfPoint>();
-                //hax2.add(handContour);
-                //Imgproc.drawContours(mRgba, hax2, 0, CONTOUR_COLOR);
                 Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
             }
