@@ -223,26 +223,13 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 //List<Point> enclosingCircle = new ArrayList<Point>();
                 int fingerDefects=0;
                 boolean thumbDefects=false;
+                List<MatOfPoint> triangles= new ArrayList<MatOfPoint>();
                 for(int i=0; i<convexityDefectsList.size(); i+=4)
                 {
-                    //if(convexityDefectsList.get(i+3) > 10000) {
                     double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
-                    //System.out.println("area:" + area);
-
-                    /*Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                    Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));*/
-
                     area = area/rect.area();
-
-
                     if((area > .075) ) {
                         thumbDefects = true;
-                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
-                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
-
-
                         MatOfPoint triangle = new MatOfPoint();
                         List<Point> lp = new ArrayList<Point>();
                         lp.add(contourPts[convexityDefectsList.get(i)]);
@@ -252,7 +239,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(200,20,20));
 
                     }
-                    else if (area > .02)
+                    else if (area > .025)
                     {
                         fingerDefects+=1;
                         MatOfPoint triangle = new MatOfPoint();
@@ -261,7 +248,13 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         lp.add(contourPts[convexityDefectsList.get(i+1)]);
                         lp.add(contourPts[convexityDefectsList.get(i+2)]);
                         triangle.fromList(lp);
-                        Core.fillConvexPoly(mRgba,triangle, new Scalar(20,200,20));
+                        triangles.add(triangle);
+                        //Core.fillConvexPoly(mRgba,triangle, new Scalar(20,200,20));
+                    }
+                    if(fingerDefects>2)
+                    {
+                        for(MatOfPoint mop : triangles)
+                            Core.fillConvexPoly(mRgba, mop,new Scalar(20,200,20));
                     }
 
                 }
@@ -271,16 +264,8 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 if(fingerDefects > 2)
                 {
                     open = true;
-                    //angle += 2%180;
-                    if(thumbDefects = false);
-                    {
-                        //   angle +=8%180;
-                    }
                 }
-                if(open == false && thumbDefects==true)
-                {
-                    // angle -= 15%180;
-                }
+
                 mAngle = ExponentialMovingAverage.calc(mapAngle(angle),mAngle,mAngleAlpha);
                 mSpeed = ExponentialMovingAverage.calc(mSpeed,open ? 0:1,mSpeedAlpha);
 

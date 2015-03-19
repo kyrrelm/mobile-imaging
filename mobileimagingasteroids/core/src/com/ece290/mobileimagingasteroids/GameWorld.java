@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class GameWorld {
 
-    private final float ASTEROID_ARRIVAL_RATE = 0.1f;
+    private final float ASTEROID_ARRIVAL_RATE = 0.05f;
     private final float ASTEROID_MAX = 10;
 
     private int mWidth, mHeight;
@@ -64,6 +64,7 @@ public class GameWorld {
     }
     public void setShoot(boolean shoot)
     {
+        System.out.println("shoot:"+shoot);
         mShoot = shoot;
 
     }
@@ -115,7 +116,7 @@ public class GameWorld {
 
         //TODO remove this.
         //mShip.setVelocityY(-30);
-        asteroids.add(new Asteroid(200,200,-50,50,40,40));
+        asteroids.add(new Asteroid(200,200,0,50,-40,40));
 
         currentState = GameState.READY;
     }

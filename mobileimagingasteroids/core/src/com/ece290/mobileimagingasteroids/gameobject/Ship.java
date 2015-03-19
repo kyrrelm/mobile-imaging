@@ -14,13 +14,13 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Ship extends GameObject {
 
-    private final float COOLDOWN_TIME = 10; //TODO
+    private final float COOLDOWN_TIME = 1; //TODO
     private final float SPEED = 250;
 
     private float shotCooldown = 0;
 
     //Number of lives left
-    private int lives = 1;
+    private int lives = 1000;
     private boolean isDead = false;
 
     private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("shot_sound.mp3"));
