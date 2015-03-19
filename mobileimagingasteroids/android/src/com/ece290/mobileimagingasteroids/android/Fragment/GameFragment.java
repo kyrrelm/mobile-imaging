@@ -3,6 +3,7 @@ package com.ece290.mobileimagingasteroids.android.Fragment;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.input.GestureDetector;
+import com.ece290.mobileimagingasteroids.GameWorld;
 import com.ece290.mobileimagingasteroids.MobileImagingAsteroids;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
  */
 public class GameFragment extends AndroidFragmentApplication
 {
+    private MobileImagingAsteroids mia;
+    private GameWorld gw;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -25,12 +28,22 @@ public class GameFragment extends AndroidFragmentApplication
         config.useWakelock = true;
         config.useAccelerometer = false;
         config.useCompass = false;
-        return initializeForView(new MobileImagingAsteroids(), config);
+        mia = new MobileImagingAsteroids();
+        return initializeForView(mia, config);
     }
 
-    public void onRotationUpdate(double rotationUpdate)
+    public void onRotationUpdate(double rotationUpdate, double speed, boolean shoot)
     {
+        if(gw==null)
+        {
+            gw = mia.getGameWorld();
+        }
+        gw.setShipRotationUpdate(rotationUpdate);
+        gw.setShoot(shoot);
+        gw.setShipSpeed(speed);
         //Log.i("GameFragment", "rotationUpdate:"+rotationUpdate);
     }
+
+
 
 }

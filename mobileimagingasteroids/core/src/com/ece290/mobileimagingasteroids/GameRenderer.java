@@ -102,14 +102,8 @@ public class GameRenderer {
 
         mSpriteBatch.end();
 
-
-        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(87 / 255.0f, 109 / 255.0f, 120 / 255.0f, 1);
-        shapeRenderer.rect(world.getRect().x, world.getRect().y, world.getRect().width, world.getRect().height);
-        shapeRenderer.end();*/
-
         //Draw Polygons
-        shapeRenderer.begin(ShapeType.Line);
+        /*shapeRenderer.begin(ShapeType.Line);
         shapeRenderer.setColor(Color.CYAN);
         shapeRenderer.polygon(ship.getPolygon().getTransformedVertices());
         for(Asteroid a : world.getAsteroids())
@@ -118,6 +112,6 @@ public class GameRenderer {
         for(Shot s: world.getShots())
             shapeRenderer.polygon(s.getPolygon().getTransformedVertices());
 
-        shapeRenderer.end();
+        shapeRenderer.end();*/
     }
 }
