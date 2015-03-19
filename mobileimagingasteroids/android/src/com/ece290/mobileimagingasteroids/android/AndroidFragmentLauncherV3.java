@@ -225,11 +225,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 Rect rect = Imgproc.boundingRect(handContour);
                 Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 254), 3);
 
-                if(rect.width > rect.height)
-                {
-                    return mRgba;
-                }
-
+               
                 //Core.fillPoly(mRgba,contours, new Scalar(20,200,20));
 
                 //List<Point> enclosingCircle = new ArrayList<Point>();
