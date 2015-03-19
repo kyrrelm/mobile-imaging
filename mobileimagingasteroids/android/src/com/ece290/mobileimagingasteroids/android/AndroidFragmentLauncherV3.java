@@ -195,10 +195,21 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 }catch (Exception e ){
                     return mRgba;
                 }
+                Point topMost = contourPts[0];
+                for(Point p : contourPts)
+                {
+                    if(p.y < topMost.y)
+                    {
+                        topMost = p;
+                    }
+                }
+                //Core.circle(mRgba,topMost,20, new Scalar(200,20,20),5);
+
                 List<Integer> convexityDefectsList = convexityDefects.toList();
                 // Convert Point arrays into MatOfPoint
                 MatOfPoint convexHullMatOfPoints = matOfIntToMatOfPoint(convexHullMatOfInt, handContour);
                 Point centroid = centerOfMass(convexHullMatOfPoints);
+
 
                 MatOfPoint2f contourMat2f = new MatOfPoint2f();
                 contourMat2f.fromArray(contourPts);
@@ -211,14 +222,15 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 catch (Exception e){
                     return mRgba;
                 }
-                Core.ellipse(mRgba,rotatedRect, new Scalar(255,127,58),3);
                 Rect rect = Imgproc.boundingRect(handContour);
                 Core.rectangle(mRgba, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255, 0, 0, 254), 3);
 
+                if(rect.width > rect.height)
+                {
+                    return mRgba;
+                }
 
                 //Core.fillPoly(mRgba,contours, new Scalar(20,200,20));
-
-                List<Integer> filteredConvexityDefectsList = new ArrayList<>();
 
                 //List<Point> enclosingCircle = new ArrayList<Point>();
                 int fingerDefects=0;
@@ -226,27 +238,33 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 List<MatOfPoint> triangles= new ArrayList<MatOfPoint>();
                 for(int i=0; i<convexityDefectsList.size(); i+=4)
                 {
+                    List<Point> lp = new ArrayList<Point>();
+                    lp.add(contourPts[convexityDefectsList.get(i)]);
+                    lp.add(contourPts[convexityDefectsList.get(i+1)]);
+                    lp.add(contourPts[convexityDefectsList.get(i+2)]);
                     double area = calcAreaTriangle(contourPts[convexityDefectsList.get(i)],contourPts[convexityDefectsList.get(i+1)],contourPts[convexityDefectsList.get(i+2)]);
                     area = area/rect.area();
-                    if((area > .075) ) {
+
+                    //if((area > .075) ) {
+                    if((area > .075
+                    ) ) {
                         thumbDefects = true;
                         MatOfPoint triangle = new MatOfPoint();
-                        List<Point> lp = new ArrayList<Point>();
-                        lp.add(contourPts[convexityDefectsList.get(i)]);
-                        lp.add(contourPts[convexityDefectsList.get(i+1)]);
-                        lp.add(contourPts[convexityDefectsList.get(i+2)]);
+
                         triangle.fromList(lp);
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(200,20,20));
+
+                        //double angle = Math.atan2(lp.get(0).x,lp.get(0).y) - Math.atan2(lp.get(1).x,lp.get(1).y);
+                        //angle = Math.toDegrees(angle);
+
+
+
 
                     }
                     else if (area > .025)
                     {
                         fingerDefects+=1;
                         MatOfPoint triangle = new MatOfPoint();
-                        List<Point> lp = new ArrayList<Point>();
-                        lp.add(contourPts[convexityDefectsList.get(i)]);
-                        lp.add(contourPts[convexityDefectsList.get(i+1)]);
-                        lp.add(contourPts[convexityDefectsList.get(i+2)]);
                         triangle.fromList(lp);
                         triangles.add(triangle);
                         //Core.fillConvexPoly(mRgba,triangle, new Scalar(20,200,20));
@@ -265,6 +283,9 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                 {
                     open = true;
                 }
+
+                Core.ellipse(mRgba,rotatedRect, new Scalar(255,127,58),3);
+
 
                 mAngle = ExponentialMovingAverage.calc(mapAngle(angle),mAngle,mAngleAlpha);
                 mSpeed = ExponentialMovingAverage.calc(mSpeed,open ? 0:1,mSpeedAlpha);
