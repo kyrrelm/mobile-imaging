@@ -82,7 +82,7 @@ public class GameWorld {
             @Override
             public void onShoot() {
                 Shot shot = mShip.shoot();
-                if(shot != null)
+                if (shot != null)
                     shots.add(shot);
             }
         });
@@ -158,6 +158,7 @@ public class GameWorld {
 
                 if (Intersector.overlapConvexPolygons(currShot.getPolygon(), currAsteroid.getPolygon())) {
                     shots.remove(currShot);
+                    score += 10;
 
                     if (currAsteroid.getWidth() > 60 && currAsteroid.getHeight() > 60) {
                         asteroids.remove(j);
@@ -274,8 +275,7 @@ public class GameWorld {
     public Ship getShip(){return mShip;}
     public List<Asteroid> getAsteroids(){return asteroids;}
     public List<Shot> getShots() {return shots;}
-    public String getScore(){
-        int fullScore = (int)(runTime/1000) + score;
-        return fullScore+"";
+    public String getScore() {
+        return score + (int) runTime + "";
     }
 }

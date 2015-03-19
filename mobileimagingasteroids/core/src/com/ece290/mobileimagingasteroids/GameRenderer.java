@@ -54,19 +54,6 @@ public class GameRenderer {
         mSpriteBatch.draw(AssetLoader.shipSprite, ship.getX(), ship.getY(),ship.getWidth()/2,ship.getHeight()/2,ship.getWidth(),ship.getHeight(),1,1,ship.getRotation());
         //Gdx.app.log("GameRnderer", "rotation:"+ship.getRotation());
 
-        float middleX = Gdx.graphics.getWidth()/2;
-        float middleY = Gdx.graphics.getHeight()/2;
-
-        if(world.isGameOver()) {
-//            AssetLoader.font.draw(mSpriteBatch, "GAME OVER",(Gdx.graphics.getWidth()/2)-50, 200);
-            AssetLoader.restartButton.draw(mSpriteBatch, 1);
-
-        } else if(world.isReady()) {
-//            AssetLoader.font.draw(mSpriteBatch, "ASTEROIDS",(Gdx.graphics.getWidth()/2)-50, 200);
-            AssetLoader.startButton.draw(mSpriteBatch, 1);
-            //TODO
-
-        }
 
         for (Asteroid a : world.getAsteroids())
         {
@@ -78,11 +65,18 @@ public class GameRenderer {
         }
 
 
-        BitmapFont scoreDisplay = new BitmapFont();
+        BitmapFont scoreDisplay = new BitmapFont(Gdx.files.internal("skins/default.fnt"), true);
         scoreDisplay.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        scoreDisplay.setScale(2);
-        scoreDisplay.draw(mSpriteBatch, "Score: "+world.getScore(), 25, 100);
 
+        if (world.isGameOver()) {
+            scoreDisplay.setScale(5, 5);
+            scoreDisplay.drawMultiLine(mSpriteBatch,
+                                       "Game over!\nYour final score was:\n" + world.getScore() +
+                                       "\n\n Touch to restart", 50, 200);
+        } else {
+            scoreDisplay.setScale(3, 3);
+            scoreDisplay.draw(mSpriteBatch, "Score: " + world.getScore(), 100, 100);
+        }
         mSpriteBatch.end();
 
 
