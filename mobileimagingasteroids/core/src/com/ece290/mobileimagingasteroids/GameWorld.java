@@ -103,6 +103,13 @@ public class GameWorld {
                 if(shot != null)
                     shots.add(shot);
             }
+
+            @Override
+            public void changeGameState() {
+                if(currentState == GameState.GAMEOVER) {
+                    restart();
+                }
+            }
         });
     }
 

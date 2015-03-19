@@ -28,4 +28,6 @@ public interface ControlsListener{
      */
     public void onShoot();
 
+    public void changeGameState();
+
 }
