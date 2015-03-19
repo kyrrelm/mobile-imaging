@@ -42,7 +42,8 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
     public boolean tap(float x, float y, int count, int button) {
 
         for(ControlsListener l : listeners)
-            l.onShoot();
+            l.changeGameState();
+           // l.onShoot();
         return true;
     }
 
@@ -51,7 +52,7 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
      */
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-
+/*
         float x1n = initialPointer1.x;
         float y1n = initialPointer1.y;
 
@@ -76,8 +77,8 @@ public class TouchGestureListener implements GestureDetector.GestureListener {
         for(ControlsListener cl : listeners) {
             cl.onRotationUpdate(degrees/2);
         }
-
-        return true;
+*/
+        return false;
     }
 
     /**
