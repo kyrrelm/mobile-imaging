@@ -57,7 +57,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
     private double mAngle = 0;
     private double mAngleAlpha = .1;
     private double mSpeed = 0;
-    private double mSpeedAlpha = .1;
+    private double mSpeedAlpha = .5;
 
     private double mapAngle(double angle)
     {
@@ -237,10 +237,10 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
 
                     if((area > .075) ) {
                         thumbDefects = true;
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
-                        Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
-                        System.out.println("i+3:"+convexityDefectsList.get(i+3));
+                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i)], 10, new Scalar(255, 0, 255));
+                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 1)], 10, new Scalar(0, 255, 255));
+                        //Core.circle(mRgba, contourPts[convexityDefectsList.get(i + 2)], 10, new Scalar(255, 0, 0));
+
 
                         MatOfPoint triangle = new MatOfPoint();
                         List<Point> lp = new ArrayList<Point>();
@@ -251,7 +251,7 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
                         Core.fillConvexPoly(mRgba,triangle, new Scalar(200,20,20));
 
                     }
-                    else if (area > .03)
+                    else if (area > .025)
                     {
                         fingerDefects+=1;
                         MatOfPoint triangle = new MatOfPoint();
@@ -267,7 +267,6 @@ public class AndroidFragmentLauncherV3 extends FragmentActivity implements Andro
 
                 boolean open = false;
                 double angle = rotatedRect.angle;
-                System.out.println("fingerDefects:"+fingerDefects);
                 if(fingerDefects > 3)
                 {
                     open = true;

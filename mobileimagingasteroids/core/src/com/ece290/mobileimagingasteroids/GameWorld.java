@@ -67,7 +67,6 @@ public class GameWorld {
     }
     public void setShipSpeed(double speed)
     {
-        System.out.println("SPEED:"+speed);
         mShip.setVelocityY((float)(-80*speed));
     }
     public GameWorld(int width, int height)
@@ -214,7 +213,7 @@ public class GameWorld {
             if(Intersector.overlapConvexPolygons(mShip.getPolygon(), a.getPolygon()))
             {
                 if(!hasCrashed){
-                    System.out.println("SHIP HIT");
+                    //System.out.println("SHIP HIT");
                     crashSound.play();
                     hasCrashed = true;
                     mShip.crashed();
