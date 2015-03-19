@@ -278,4 +278,5 @@ public class GameWorld {
         int fullScore = (int)(runTime/1000) + score;
         return fullScore+"";
     }
+    public int getLives() { return mShip.getLives();}
 }

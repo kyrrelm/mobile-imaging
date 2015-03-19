@@ -10,6 +10,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ece290.mobileimagingasteroids.controls.TouchGestureListener;
 import com.ece290.mobileimagingasteroids.gameobject.Asteroid;
 import com.ece290.mobileimagingasteroids.gameobject.Ship;
@@ -24,7 +30,7 @@ public class GameRenderer {
     private ShapeRenderer shapeRenderer;
     private SpriteBatch mSpriteBatch;
 
-    public GameRenderer(GameWorld world){
+    public GameRenderer(final GameWorld world){
         this.world = world;
 
         cam = new OrthographicCamera();
@@ -38,6 +44,12 @@ public class GameRenderer {
 
         GestureDetector gd = new GestureDetector(new TouchGestureListener());
         Gdx.input.setInputProcessor(gd);
+
+        AssetLoader.restartButton.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                world.restart();
+            }
+        });
     }
     public void render() {
         //Gdx.app.log("GameRenderer", "render");
@@ -60,12 +72,17 @@ public class GameRenderer {
         if(world.isGameOver()) {
 //            AssetLoader.font.draw(mSpriteBatch, "GAME OVER",(Gdx.graphics.getWidth()/2)-50, 200);
             AssetLoader.restartButton.draw(mSpriteBatch, 1);
+            world.restart();
 
         } else if(world.isReady()) {
 //            AssetLoader.font.draw(mSpriteBatch, "ASTEROIDS",(Gdx.graphics.getWidth()/2)-50, 200);
             AssetLoader.startButton.draw(mSpriteBatch, 1);
-            //TODO
-
+            AssetLoader.startButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    world.start();
+                }
+            });
         }
 
         for (Asteroid a : world.getAsteroids())
@@ -81,7 +98,7 @@ public class GameRenderer {
         BitmapFont scoreDisplay = new BitmapFont();
         scoreDisplay.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         scoreDisplay.setScale(2);
-        scoreDisplay.draw(mSpriteBatch, "Score: "+world.getScore(), 25, 100);
+        scoreDisplay.draw(mSpriteBatch, "Lives left: "+world.getLives()+"    -    "+"Score: "+world.getScore(), 25, 100);
 
         mSpriteBatch.end();
 

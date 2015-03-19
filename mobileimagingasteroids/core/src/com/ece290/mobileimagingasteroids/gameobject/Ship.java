@@ -14,13 +14,13 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Ship extends GameObject {
 
-    private final float COOLDOWN_TIME = 10; //TODO
+    private final float COOLDOWN_TIME = 0.05f; //TODO
     private final float SPEED = 250;
 
     private float shotCooldown = 0;
 
     //Number of lives left
-    private int lives = 1;
+    private int lives = 5;
     private boolean isDead = false;
 
     private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("shot_sound.mp3"));
@@ -32,8 +32,8 @@ public class Ship extends GameObject {
 
     public Shot shoot() {
 
-        //if(shotCooldown > 0)
-          //  return null;
+        if(shotCooldown > 0)
+            return null;
 
         Vector2 speed = new Vector2(0,-SPEED).rotate(getRotation());
 
@@ -76,8 +76,8 @@ public class Ship extends GameObject {
      * <p>Then it will reduce the number of lives</p>
      */
     public void crashed() {
-        if(--lives <= 0)    isDead = true;
+                            if(--lives <= 0)    isDead = true;
     }
-
-    public boolean isDead(){ return isDead;}
+    public int getLives() {     return this.lives;}
+    public boolean isDead(){    return isDead;}
 }
